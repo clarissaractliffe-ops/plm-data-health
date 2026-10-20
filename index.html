@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.5 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>PLM Data Health</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+/* Layout: a working tool. Header with data source, filter bar, overview (donut + field bars), supplier heatmap, then the list to chase. */
+:root{
+  --bg:#F1F3F0; --surface:#FFFFFF; --sunk:#E8EBE6; --ink:#18201C; --muted:#5B655F; --line:#D5DBD5;
+  --accent:#2C5A4C; --accent-ink:#FFFFFF; --accent-soft:#DCE8E2;
+  --good:#3D8A57; --mild:#B9C77A; --warn:#C7861C; --crit:#B4473A; --on-crit:#FFFFFF;
+  --f-display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111613; --surface:#181E1A; --sunk:#202722; --ink:#E6EBE7; --muted:#97A39B; --line:#2B332E;
+  --accent:#86BFA9; --accent-ink:#0F1612; --accent-soft:#22352D;
+  --good:#6DBB86; --mild:#A9B86C; --warn:#E0A440; --crit:#E2796A; --on-crit:#170B09; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111613; --surface:#181E1A; --sunk:#202722; --ink:#E6EBE7; --muted:#97A39B; --line:#2B332E;
+  --accent:#86BFA9; --accent-ink:#0F1612; --accent-soft:#22352D;
+  --good:#6DBB86; --mild:#A9B86C; --warn:#E0A440; --crit:#E2796A; --on-crit:#170B09; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1,h2{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(26px,4vw,36px);font-weight:700;line-height:1.1}
+h2{font-size:17px;font-weight:600}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.lede{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.mono{font-family:var(--f-mono);font-size:12.5px}
+.num{font-variant-numeric:tabular-nums}
+
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px}
+.source{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--sunk);color:var(--muted);font-size:12.5px;font-weight:500}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--warn)}
+.pill.real::before{background:var(--good)}
+.btn{font:inherit;font-weight:500;font-size:13.5px;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.small{padding:6px 10px;font-size:12.5px}
+.btn:focus-visible,select:focus-visible,input:focus-visible,.chip-btn:focus-visible,.bar-row:focus-visible,td.cell:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.note{margin:-8px 0 0;color:var(--muted);font-size:12.5px}
+
+.filters{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+select,input[type=search]{font:inherit;font-size:13.5px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);max-width:100%}
+select{min-width:150px}
+.filters .spacer{flex:1}
+details.cols{position:relative}
+details.cols summary{list-style:none;cursor:pointer}
+details.cols summary::-webkit-details-marker{display:none}
+.cols-panel{position:absolute;right:0;top:calc(100% + 6px);z-index:5;width:min(420px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;box-shadow:0 12px 32px rgba(0,0,0,.14)}
+.cols-panel p{margin:0 0 8px;color:var(--muted);font-size:12.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip-btn{font:inherit;font-size:12.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--muted);cursor:pointer}
+.chip-btn[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink);border-color:var(--accent)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.panel .head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.panel .head .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.overview{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px}
+@media (max-width:820px){.overview{grid-template-columns:minmax(0,1fr)}}
+
+.donut-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.donut{width:150px;height:150px;flex:none}
+.donut text{fill:var(--ink)}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:13px;min-width:0}
+.legend span.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+.legend .n{color:var(--muted);margin-left:4px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.stat .k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.stat .v{font-family:var(--f-display);font-size:22px;font-weight:600;line-height:1.2}
+.stat .v small{font-family:var(--f-body);font-size:12.5px;color:var(--muted);font-weight:400}
+.stat.wide{grid-column:1/-1}
+
+.bars{display:flex;flex-direction:column;gap:4px}
+.bar-row{display:grid;grid-template-columns:minmax(90px,170px) minmax(0,1fr) 92px;align-items:center;gap:12px;padding:6px 8px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+.bar-row:hover{background:var(--sunk)}
+.bar-row.on{background:var(--accent-soft);border-color:var(--accent)}
+.bar-row .name{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{height:12px;border-radius:6px;background:var(--sunk);overflow:hidden;position:relative}
+.track .fill{height:100%;border-radius:6px}
+.bar-row .val{text-align:right;font-variant-numeric:tabular-nums;font-size:13px}
+.bar-row .val b{font-weight:600}
+.bar-row .val span{color:var(--muted);font-size:11.5px;display:block;line-height:1.2}
+.always{margin:12px 8px 0;color:var(--muted);font-size:12.5px}
+.empty{color:var(--muted);padding:12px 8px}
+@media (max-width:480px){.bar-row{grid-template-columns:minmax(0,1fr) 70px}.bar-row .track{grid-column:1/-1;grid-row:2}}
+
+.seg{display:inline-flex;background:var(--sunk);border-radius:8px;padding:3px;gap:2px}
+.seg button{font:inherit;font-size:12.5px;border:0;background:transparent;color:var(--muted);padding:5px 10px;border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.heat th.c{text-align:center}
+.heat td.g{font-weight:500;white-space:nowrap}
+.heat td.g small{display:block;color:var(--muted);font-weight:400;font-size:11.5px}
+.heat td.cell{text-align:center;font-variant-numeric:tabular-nums;cursor:pointer;min-width:62px;border-left:2px solid var(--surface);border-right:2px solid var(--surface)}
+.heat td.cell:hover{outline:2px solid var(--accent);outline-offset:-2px}
+.heat td.zero{color:var(--muted)}
+.heat td.tot{font-weight:600;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.list-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.active-filter{display:inline-flex;align-items:center;gap:6px;padding:4px 6px 4px 10px;border-radius:999px;background:var(--accent-soft);font-size:12.5px;font-weight:500}
+.active-filter button{border:0;background:transparent;color:var(--ink);cursor:pointer;font-size:15px;line-height:1;padding:0 4px;border-radius:50%}
+.list td.code{font-family:var(--f-mono);font-size:12.5px;white-space:nowrap}
+.list td.desc{min-width:180px}
+.list td.sup{white-space:nowrap;color:var(--muted)}
+.miss{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:11.5px;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--crit) 14%,var(--surface));color:var(--ink);white-space:nowrap;border:1px solid color-mix(in srgb,var(--crit) 30%,var(--surface))}
+.tag.hl{background:var(--crit);color:var(--on-crit);border-color:var(--crit)}
+.count{font-variant-numeric:tabular-nums;font-weight:600;text-align:center}
+.more{color:var(--muted);font-size:12.5px;margin:10px 0 0}
+
+#drop{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 85%,transparent);border:3px dashed var(--accent);font-family:var(--f-display);font-size:22px;font-weight:600;color:var(--accent)}
+[hidden]{display:none!important}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;max-width:calc(100vw - 32px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#copyBox{position:fixed;inset:auto 16px calc(16px + env(safe-area-inset-bottom,0px));z-index:25;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;box-shadow:0 12px 32px rgba(0,0,0,.2);max-width:640px;margin:0 auto}
+#copyBox textarea{width:100%;height:180px;font-family:var(--f-mono);font-size:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px}
+#copyBox .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Merchandising · Materials</div>
+      <h1>PLM Data Health</h1>
+      <p class="lede">Which fields are empty in the PLM material export, and which suppliers to chase.</p>
+    </div>
+    <div class="source">
+      <span id="srcPill" class="pill">Sample data</span>
+      <label class="btn primary" for="file">Load PLM export</label>
+      <input id="file" class="vh" type="file" accept=".xlsx,.xls,.csv">
+      <button id="resetBtn" class="btn" type="button" hidden>Back to sample</button>
+    </div>
+  </header>
+  <p class="note" id="note">Showing invented example materials. Load an Excel or CSV export, or drop it on the page. The file is read in your browser and is not uploaded anywhere.</p>
+
+  <section class="filters" aria-label="Filters">
+    <div class="f" id="fwColl"><label for="fColl">Collection</label><select id="fColl"></select></div>
+    <div class="f" id="fwSup"><label for="fSup">Supplier</label><select id="fSup"></select></div>
+    <div class="f" id="fwCat"><label for="fCat">Category</label><select id="fCat"></select></div>
+    <div class="spacer"></div>
+    <button id="clearAll" class="btn small" type="button">Clear filters</button>
+    <details class="cols" id="colsDetails">
+      <summary class="btn small" id="colsSummary">Columns checked</summary>
+      <div class="cols-panel">
+        <p>Turn off columns that are allowed to be empty, such as comments.</p>
+        <div class="chips" id="colChips"></div>
+      </div>
+    </details>
+  </section>
+
+  <section class="overview">
+    <div class="panel">
+      <div class="head"><div><h2>Completeness</h2><div class="sub" id="scopeLbl"></div></div></div>
+      <div class="donut-wrap">
+        <svg class="donut" id="donut" viewBox="0 0 150 150" role="img" aria-label="Materials by number of missing fields"></svg>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="panel">
+      <div class="head"><div><h2>Missing by field</h2><div class="sub">Share of materials with this field empty. Click a field to list those materials.</div></div></div>
+      <div class="bars" id="bars"></div>
+      <p class="always" id="always"></p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="head">
+      <div><h2>Where the gaps are</h2><div class="sub">% of materials missing each field. Click a cell to see the materials.</div></div>
+      <div class="seg" id="groupSeg" role="group" aria-label="Group by"></div>
+    </div>
+    <div class="scroll"><table class="heat" id="heat"></table></div>
+  </section>
+
+  <section class="panel" id="listPanel">
+    <div class="head">
+      <div><h2 id="listTitle">Materials to complete</h2><div class="sub" id="listSub"></div></div>
+      <div class="list-tools">
+        <span id="fieldFilter"></span>
+        <input type="search" id="search" placeholder="Search code, description, supplier" aria-label="Search materials">
+        <button class="btn small" id="copyChase" type="button">Copy chase list</button>
+        <button class="btn small" id="copyTable" type="button">Copy for Excel</button>
+      </div>
+    </div>
+    <div class="scroll"><table class="list" id="list"></table></div>
+    <p class="more" id="more"></p>
+  </section>
+</div>
+
+<div id="drop" hidden>Drop the PLM export to check it</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="copyBox" hidden>
+  <div class="row"><strong>Copy this text</strong><button class="btn small" id="copyClose" type="button">Close</button></div>
+  <textarea id="copyText" readonly aria-label="Text to copy"></textarea>
+</div>
+
+<script>
+(function(){
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MISSING = new Set(['','-','–','—','n/a','na','n.a.','tbd','tba','tbc','null','none','#n/a','?','0000','x']);
+const isMissing = v => v === null || v === undefined || MISSING.has(String(v).trim().toLowerCase());
+const fmtPct = x => x === 0 ? '0%' : (x < 0.01 ? '<1%' : Math.round(x*100) + '%');
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- Sample data (invented) ---------- */
+function makeSample(){
+  let a = 20261020;
+  const R = () => { a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; };
+  const pick = arr => arr[Math.floor(R()*arr.length)];
+  const between = (lo,hi) => Math.round(lo + R()*(hi-lo));
+  const SUP = [
+    {n:'Lanificio Ardesia', c:'Italy', m:0.8, cats:['Wool','Jersey']},
+    {n:'Tessitura Morano', c:'Italy', m:1.0, cats:['Silk','Cotton']},
+    {n:'Hilaturas Ebro', c:'Spain', m:1.75, cats:['Cotton','Jersey','Wool']},
+    {n:'Conceria Valdarno', c:'Italy', m:0.45, cats:['Leather']},
+    {n:'Kōzan Weaving', c:'Japan', m:1.3, cats:['Cotton','Technical']},
+    {n:'Soieries Bellecour', c:'France', m:0.9, cats:['Silk','Technical']},
+    {n:'Pieles del Guadalete', c:'Spain', m:1.15, cats:['Leather']}
+  ];
+  const CAT = {
+    Wool:{d:['Double-face wool cloth','Wool gabardine','Brushed mohair blend','Wool flannel','Boiled wool'],c:['100% wool','80% wool 20% polyamide','70% wool 30% mohair','90% wool 10% cashmere'],w:[280,620],cert:['RWS']},
+    Cotton:{d:['Cotton poplin','Cotton canvas','Washed denim 13 oz','Cotton seersucker','Organic cotton twill'],c:['100% cotton','98% cotton 2% elastane','100% organic cotton'],w:[110,420],cert:['GOTS','OEKO-TEX','GOTS']},
+    Silk:{d:['Silk crêpe de chine','Silk satin','Silk organza','Silk-viscose devoré'],c:['100% silk','70% viscose 30% silk'],w:[40,120],cert:['OEKO-TEX']},
+    Leather:{d:['Nappa lambskin','Calf box leather','Suede goatskin','Grained calfskin'],c:['100% lamb leather','100% calf leather','100% goat leather'],w:null,cert:['LWG Gold','LWG Silver']},
+    Technical:{d:['Nylon taffeta','Recycled poly ripstop','Bonded neoprene','Coated cotton'],c:['100% polyamide','100% recycled polyester','62% cotton 38% PU coating'],w:[60,380],cert:['GRS','bluesign']},
+    Jersey:{d:['Viscose jersey','Cotton interlock','Merino rib','Cashmere jersey'],c:['95% viscose 5% elastane','100% cotton','100% merino wool','100% cashmere'],w:[140,320],cert:['OEKO-TEX','RWS']}
+  };
+  const COLL = [{n:'FW26',k:'26W',m:0.55,count:70},{n:'Pre-SS27',k:'27P',m:1.0,count:45},{n:'SS27',k:'27S',m:1.45,count:85}];
+  const BASE = {'Description':0.01,'Composition':0.04,'Weight':0.11,'Width / skin size':0.07,'Price':0.28,'Price unit':0.02,'MOQ':0.17,'Lead time (wks)':0.21,'Country of origin':0.08,'Colours ordered':0.05,'Certification':0.24};
+  const rows = []; let serial = 100;
+  for (const col of COLL){
+    for (let i=0;i<col.count;i++){
+      const s = pick(SUP), cat = pick(s.cats), C = CAT[cat], lea = cat==='Leather';
+      serial += between(1,9);
+      const r = {
+        'Code': (lea?'LEA':'FAB') + '-' + col.k + '-' + String(serial).padStart(4,'0'),
+        'Description': pick(C.d),
+        'Collection': col.n,
+        'Supplier': s.n,
+        'Category': cat,
+        'Composition': pick(C.c),
+        'Weight': lea ? (pick([0.6,0.8,0.9,1.1,1.2]).toFixed(1)+' mm') : (between(C.w[0],C.w[1])+' g/m²'),
+        'Width / skin size': lea ? (between(5,9)+' sqft') : (pick([138,140,145,148,150,152])+' cm'),
+        'Price': lea ? (4 + R()*10).toFixed(2) : (9 + R()*100).toFixed(2),
+        'Price unit': lea ? '€/sqft' : '€/m',
+        'MOQ': lea ? pick([200,300,500]) : pick([50,100,150,300]),
+        'Lead time (wks)': between(3,14),
+        'Country of origin': s.c,
+        'Colours ordered': between(1,9),
+        'Certification': pick(C.cert)
+      };
+      for (const f in BASE){ if (R() < Math.min(0.92, BASE[f]*s.m*col.m)) r[f] = ''; }
+      rows.push(r);
+    }
+  }
+  const fields = ['Code','Description','Collection','Supplier','Category','Composition','Weight','Width / skin size','Price','Price unit','MOQ','Lead time (wks)','Country of origin','Colours ordered','Certification'];
+  return {rows, fields, id:'Code', groups:{collection:'Collection', supplier:'Supplier', category:'Category'}, desc:'Description', source:null};
+}
+
+/* ---------- State ---------- */
+let D = null;
+const S = {showAll:false, checked:[], coll:'all', sup:'all', cat:'all', field:null, search:'', groupBy:'supplier'};
+const GLABEL = {collection:'Collection', supplier:'Supplier', category:'Category'};
+
+function load(data){
+  D = data;
+  S.checked = D.fields.filter(f => f !== D.id);
+  S.coll = S.sup = S.cat = 'all'; S.field = null; S.search = ''; $('search').value = '';
+  if (!D.groups[S.groupBy]) S.groupBy = ['supplier','collection','category'].find(k => D.groups[k]) || null;
+  const real = !!D.source;
+  $('srcPill').textContent = real ? `${D.source} · ${D.rows.length} rows` : `Sample data · ${D.rows.length} materials`;
+  $('srcPill').classList.toggle('real', real);
+  $('resetBtn').hidden = !real;
+  $('note').textContent = real
+    ? 'Your file was read in this browser and was not uploaded. Reload the page to clear it.'
+    : 'Showing invented example materials. Load an Excel or CSV export, or drop it on the page. The file is read in your browser and is not uploaded anywhere.';
+  buildFilters(); buildColChips(); buildGroupSeg(); render();
+}
+
+function uniq(field){ return [...new Set(D.rows.map(r => isMissing(r[field]) ? '(blank)' : String(r[field]).trim()))].sort((a,b)=>a.localeCompare(b, undefined, {numeric:true})); }
+function fillSelect(sel, wrap, field, key, label){
+  if (!field){ wrap.hidden = true; return; }
+  wrap.hidden = false;
+  sel.innerHTML = `<option value="all">All ${label}</option>` + uniq(field).map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  sel.value = S[key];
+}
+function buildFilters(){
+  fillSelect($('fColl'), $('fwColl'), D.groups.collection, 'coll', 'collections');
+  fillSelect($('fSup'), $('fwSup'), D.groups.supplier, 'sup', 'suppliers');
+  fillSelect($('fCat'), $('fwCat'), D.groups.category, 'cat', 'categories');
+}
+function buildColChips(){
+  $('colChips').innerHTML = D.fields.filter(f => f !== D.id).map(f =>
+    `<button type="button" class="chip-btn" aria-pressed="${S.checked.includes(f)}" data-f="${esc(f)}">${esc(f)}</button>`).join('');
+  updateColsSummary();
+}
+function updateColsSummary(){
+  const total = D.fields.length - 1;
+  $('colsSummary').textContent = S.checked.length === total ? 'Columns checked: all' : `Columns checked: ${S.checked.length} of ${total}`;
+}
+function buildGroupSeg(){
+  const keys = ['supplier','collection','category'].filter(k => D.groups[k]);
+  $('groupSeg').innerHTML = keys.map(k => `<button type="button" data-g="${k}" aria-pressed="${S.groupBy===k}">By ${GLABEL[k].toLowerCase()}</button>`).join('');
+  $('groupSeg').hidden = keys.length < 2;
+}
+
+const val = (r,f) => isMissing(r[f]) ? '(blank)' : String(r[f]).trim();
+function scoped(){
+  return D.rows.filter(r =>
+    (S.coll==='all' || !D.groups.collection || val(r,D.groups.collection)===S.coll) &&
+    (S.sup==='all'  || !D.groups.supplier   || val(r,D.groups.supplier)===S.sup) &&
+    (S.cat==='all'  || !D.groups.category   || val(r,D.groups.category)===S.cat));
+}
+function scopeText(){
+  const parts = [];
+  if (S.coll!=='all') parts.push(S.coll);
+  if (S.sup!=='all') parts.push(S.sup);
+  if (S.cat!=='all') parts.push(S.cat);
+  return parts.length ? parts.join(' · ') : 'All materials';
+}
+
+/* ---------- Render ---------- */
+function render(){
+  const rows = scoped();
+  const F = S.checked;
+  const miss = rows.map(r => F.filter(f => isMissing(r[f])));
+  const fieldCount = Object.fromEntries(F.map(f => [f,0]));
+  miss.forEach(m => m.forEach(f => fieldCount[f]++));
+  const n = rows.length;
+  if (S.field && !F.includes(S.field)) S.field = null;
+
+  $('scopeLbl').textContent = `${scopeText()} · ${n} material${n===1?'':'s'}`;
+
+  // donut buckets
+  const b = [0,0,0,0];
+  miss.forEach(m => { const k=m.length; b[k===0?0:k===1?1:k<=3?2:3]++; });
+  const cols = [cssv('--good'), cssv('--mild'), cssv('--warn'), cssv('--crit')];
+  const labels = ['Complete','1 field missing','2–3 fields missing','4 or more missing'];
+  const R0 = 58, C = 2*Math.PI*R0; let off = 0;
+  let svg = `<circle cx="75" cy="75" r="${R0}" fill="none" stroke="${cssv('--sunk')}" stroke-width="18"/>`;
+  if (n) b.forEach((v,i) => {
+    if (!v) return;
+    const len = v/n*C;
+    svg += `<circle cx="75" cy="75" r="${R0}" fill="none" stroke="${cols[i]}" stroke-width="18" stroke-dasharray="${Math.max(len-1.5,0.5)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)"/>`;
+    off += len;
+  });
+  const cells = n*F.length, missCells = miss.reduce((s,m)=>s+m.length,0);
+  const filled = cells ? 1 - missCells/cells : 1;
+  svg += `<text x="75" y="74" text-anchor="middle" font-family="Familjen Grotesk, Helvetica, Arial, sans-serif" font-size="28" font-weight="600">${n ? Math.round(b[0]/n*100) : 0}%</text>
+          <text x="75" y="94" text-anchor="middle" font-size="11" style="fill:var(--muted)">complete</text>`;
+  $('donut').innerHTML = svg;
+  $('legend').innerHTML = labels.map((l,i) => `<div><span class="sw" style="background:${cols[i]}"></span>${l}<span class="n num">${b[i]}</span></div>`).join('');
+
+  const ranked = F.map(f => ({f, c:fieldCount[f], p: n ? fieldCount[f]/n : 0})).sort((x,y) => y.c - x.c || F.indexOf(x.f)-F.indexOf(y.f));
+  const gaps = ranked.filter(x => x.c > 0), full = ranked.filter(x => x.c === 0);
+  const worst = gaps[0];
+  $('stats').innerHTML = `
+    <div class="stat"><div class="k">Cells filled</div><div class="v num">${fmtPct(filled)}</div></div>
+    <div class="stat"><div class="k">To complete</div><div class="v num">${n - b[0]} <small>of ${n}</small></div></div>
+    <div class="stat wide"><div class="k">Biggest gap</div><div class="v">${worst ? esc(worst.f) + ` <small class="num">${fmtPct(worst.p)} empty</small>` : '<small>None</small>'}</div></div>`;
+
+  // bars
+  const sev = p => p >= .25 ? cols[3] : p >= .10 ? cols[2] : cols[1];
+  $('bars').innerHTML = gaps.length ? gaps.map(x => `
+    <div class="bar-row${S.field===x.f?' on':''}" role="button" tabindex="0" data-f="${esc(x.f)}" aria-pressed="${S.field===x.f}">
+      <div class="name" title="${esc(x.f)}">${esc(x.f)}</div>
+      <div class="track"><div class="fill" style="width:${Math.max(x.p*100,1)}%;background:${sev(x.p)}"></div></div>
+      <div class="val"><b>${fmtPct(x.p)}</b><span>${x.c} of ${n}</span></div>
+    </div>`).join('') : `<div class="empty">No empty fields in this selection.</div>`;
+  $('always').textContent = full.length && gaps.length ? `Always filled: ${full.map(x=>x.f).join(', ')}` : '';
+
+  renderHeat(rows, miss, gaps.map(x=>x.f));
+  renderList(rows, miss);
+}
+
+function renderHeat(rows, miss, gapFields){
+  const g = D.groups[S.groupBy];
+  if (!g || !gapFields.length){ $('heat').innerHTML = `<tr><td class="empty">${g ? 'No gaps in this selection.' : 'No supplier, collection or category column found in this file.'}</td></tr>`; return; }
+  const groups = {};
+  rows.forEach((r,i) => {
+    const k = val(r,g);
+    (groups[k] ||= {n:0, cells:0, c:{}}).n++;
+    groups[k].cells += miss[i].length;
+    miss[i].forEach(f => groups[k].c[f] = (groups[k].c[f]||0) + 1);
+  });
+  const crit = cssv('--crit');
+  const list = Object.entries(groups).map(([k,v]) => ({k, ...v, rate: v.cells/(v.n*S.checked.length)})).sort((a,b)=>b.rate-a.rate);
+  let h = `<thead><tr><th>${GLABEL[S.groupBy]}</th>${gapFields.map(f=>`<th class="c">${esc(f)}</th>`).join('')}<th style="text-align:right">All fields</th></tr></thead><tbody>`;
+  list.forEach(G => {
+    h += `<tr><td class="g">${esc(G.k)}<small>${G.n} material${G.n===1?'':'s'}</small></td>`;
+    gapFields.forEach(f => {
+      const c = G.c[f]||0, p = c/G.n;
+      const mix = Math.min(85, Math.round(p*170));
+      const style = c ? `background:color-mix(in srgb, ${crit} ${mix}%, var(--surface));${mix>=58?'color:var(--on-crit);':''}` : '';
+      h += `<td class="cell${c?'':' zero'}" tabindex="0" role="button" data-g="${esc(G.k)}" data-f="${esc(f)}" style="${style}" title="${c} of ${G.n} missing ${esc(f)}">${c ? fmtPct(p) : '–'}</td>`;
+    });
+    h += `<td class="tot">${fmtPct(G.rate)}</td></tr>`;
+  });
+  $('heat').innerHTML = h + '</tbody>';
+}
+
+let lastList = [];
+function renderList(rows, miss){
+  const q = S.search.trim().toLowerCase();
+  const sup = D.groups.supplier, coll = D.groups.collection, desc = D.desc;
+  let items = rows.map((r,i) => ({r, m:miss[i]})).filter(x => x.m.length && (!S.field || x.m.includes(S.field)));
+  if (q) items = items.filter(x => [x.r[D.id], desc && x.r[desc], sup && x.r[sup]].some(v => String(v??'').toLowerCase().includes(q)));
+  items.sort((a,b) => b.m.length - a.m.length || String(a.r[D.id]).localeCompare(String(b.r[D.id]), undefined, {numeric:true}));
+  lastList = items;
+
+  $('listTitle').textContent = S.field ? `Materials missing ${S.field}` : 'Materials to complete';
+  $('listSub').textContent = `${items.length} material${items.length===1?'':'s'} · ${scopeText()}`;
+  $('fieldFilter').innerHTML = S.field ? `<span class="active-filter">${esc(S.field)}<button type="button" id="clearField" aria-label="Clear field filter">×</button></span>` : '';
+
+  if (!items.length){ $('list').innerHTML = `<tr><td class="empty">${q ? 'No materials match this search.' : 'Every material in this selection is complete.'}</td></tr>`; $('more').textContent=''; return; }
+  const CAP = S.showAll ? 1000 : 40;
+  let h = `<thead><tr><th>${esc(D.id)}</th>${desc?'<th>Description</th>':''}${sup?`<th>${esc(sup)}</th>`:''}${coll?`<th>${esc(coll)}</th>`:''}<th style="text-align:center">Gaps</th><th>Missing</th></tr></thead><tbody>`;
+  items.slice(0,CAP).forEach(x => {
+    h += `<tr><td class="code">${esc(x.r[D.id]) || '<em>(no code)</em>'}</td>${desc?`<td class="desc">${esc(x.r[desc]) || '—'}</td>`:''}${sup?`<td class="sup">${esc(val(x.r,sup))}</td>`:''}${coll?`<td class="sup">${esc(val(x.r,coll))}</td>`:''}
+      <td class="count">${x.m.length}</td><td><div class="miss">${x.m.map(f=>`<span class="tag${f===S.field?' hl':''}">${esc(f)}</span>`).join('')}</div></td></tr>`;
+  });
+  $('list').innerHTML = h + '</tbody>';
+  $('more').innerHTML = items.length > CAP ? `Showing ${CAP} of ${items.length}. The copy buttons include all of them. ${CAP<1000?'<button type="button" class="btn small" id="showAll">Show all</button>':'Use the filters or search to narrow down.'}` : '';
+}
+
+/* ---------- Copy ---------- */
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),2200); }
+function copy(text, msg){
+  const fallback = () => { $('copyText').value = text; $('copyBox').hidden = false; $('copyText').focus(); $('copyText').select(); };
+  try {
+    navigator.clipboard.writeText(text).then(() => toast(msg), fallback);
+  } catch(e){ fallback(); }
+}
+$('copyClose').onclick = () => $('copyBox').hidden = true;
+
+$('copyChase').onclick = () => {
+  if (!lastList.length) return toast('Nothing to copy');
+  const sup = D.groups.supplier, desc = D.desc;
+  const by = {};
+  lastList.forEach(x => (by[sup ? val(x.r,sup) : 'All'] ||= []).push(x));
+  let out = `PLM missing data – ${scopeText()}${S.field ? ' – ' + S.field : ''}\n${lastList.length} materials to complete\n`;
+  Object.entries(by).sort((a,b)=>b[1].length-a[1].length).forEach(([k,arr]) => {
+    out += `\n${k} (${arr.length})\n`;
+    arr.forEach(x => out += `  ${x.r[D.id]}${desc && x.r[desc] ? ' ' + x.r[desc] : ''}: ${x.m.join(', ')}\n`);
+  });
+  copy(out, `Chase list copied (${lastList.length} materials)`);
+};
+$('copyTable').onclick = () => {
+  if (!lastList.length) return toast('Nothing to copy');
+  const sup = D.groups.supplier, coll = D.groups.collection, desc = D.desc;
+  const head = [D.id, desc, sup, coll, 'Gaps', 'Missing fields'].filter(Boolean);
+  const clean = v => String(v ?? '').replace(/[\t\n\r]+/g,' ');
+  const lines = lastList.map(x => [x.r[D.id], desc && x.r[desc], sup && val(x.r,sup), coll && val(x.r,coll), x.m.length, x.m.join(', ')].filter((v,i)=>[true,!!desc,!!sup,!!coll,true,true][i]).map(clean).join('\t'));
+  copy([head.join('\t'), ...lines].join('\n'), `Copied ${lastList.length} rows. Paste into Excel.`);
+};
+
+/* ---------- Events ---------- */
+$('fColl').onchange = e => { S.coll = e.target.value; render(); };
+$('fSup').onchange  = e => { S.sup  = e.target.value; render(); };
+$('fCat').onchange  = e => { S.cat  = e.target.value; render(); };
+$('clearAll').onclick = () => { S.coll=S.sup=S.cat='all'; S.field=null; S.search=''; $('search').value=''; buildFilters(); render(); };
+$('search').oninput = e => { S.search = e.target.value; render(); };
+$('colChips').onclick = e => {
+  const b = e.target.closest('[data-f]'); if (!b) return;
+  const f = b.dataset.f;
+  if (S.checked.includes(f)){ if (S.checked.length===1) return toast('Keep at least one column'); S.checked = S.checked.filter(x=>x!==f); }
+  else S.checked = D.fields.filter(x => x!==D.id && (S.checked.includes(x) || x===f));
+  b.setAttribute('aria-pressed', S.checked.includes(f)); updateColsSummary(); render();
+};
+$('groupSeg').onclick = e => { const b = e.target.closest('[data-g]'); if (!b) return; S.groupBy = b.dataset.g; buildGroupSeg(); render(); };
+function pickField(f){ S.field = S.field===f ? null : f; render(); }
+$('bars').onclick = e => { const r = e.target.closest('[data-f]'); if (r) pickField(r.dataset.f); };
+$('bars').onkeydown = e => { if ((e.key==='Enter'||e.key===' ') && e.target.dataset.f){ e.preventDefault(); pickField(e.target.dataset.f); } };
+function heatPick(td){
+  const key = {supplier:'sup', collection:'coll', category:'cat'}[S.groupBy];
+  S[key] = td.dataset.g; S.field = td.dataset.f; buildFilters(); render();
+  $('listPanel').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'});
+}
+$('heat').onclick = e => { const td = e.target.closest('td.cell'); if (td && !td.classList.contains('zero')) heatPick(td); };
+$('heat').onkeydown = e => { const td = e.target.closest('td.cell'); if (td && (e.key==='Enter'||e.key===' ') && !td.classList.contains('zero')){ e.preventDefault(); heatPick(td); } };
+$('more').onclick = e => { if (e.target.id==='showAll'){ S.showAll=true; render(); } };
+$('fieldFilter').onclick = e => { if (e.target.id==='clearField'){ S.field=null; render(); } };
+document.addEventListener('click', e => { const d = $('colsDetails'); if (d.open && !d.contains(e.target)) d.open = false; });
+$('resetBtn').onclick = () => load(makeSample());
+
+/* ---------- File loading ---------- */
+const findCol = (cols, re) => cols.find(c => re.test(c));
+function readFile(file){
+  if (!file) return;
+  if (typeof XLSX === 'undefined'){ toast('The spreadsheet reader did not load. Check your connection and reload.'); return; }
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const wb = XLSX.read(new Uint8Array(rd.result), {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      let rows = XLSX.utils.sheet_to_json(ws, {defval:'', raw:false});
+      if (!rows.length){ toast('That sheet has no rows under the header.'); return; }
+      let fields = Object.keys(rows[0]);
+      rows.forEach(r => Object.keys(r).forEach(k => { if (!fields.includes(k)) fields.push(k); }));
+      fields = fields.filter(f => !(/^__EMPTY/.test(f) && rows.every(r => isMissing(r[f]))));
+      rows = rows.filter(r => fields.some(f => !isMissing(r[f])));
+      const id = findCol(fields, /\b(code|ref|reference|référence|article|material ?(id|code)|sku)\b/i) || fields[0];
+      const groups = {
+        collection: findCol(fields, /collection|season|saison|temporada/i) || null,
+        supplier:   findCol(fields, /supplier|vendor|fournisseur|proveedor|mill/i) || null,
+        category:   findCol(fields, /categor|famil|type|catégorie/i) || null
+      };
+      const desc = findCol(fields.filter(f=>f!==id), /desc|name|nom|libell/i) || null;
+      load({rows, fields, id, groups, desc, source:file.name});
+      toast(`Loaded ${rows.length} rows from ${wb.SheetNames[0]}`);
+    } catch(err){ toast('Could not read that file. Save it as .xlsx or .csv and try again.'); }
+  };
+  rd.readAsArrayBuffer(file);
+}
+$('file').onchange = e => { readFile(e.target.files[0]); e.target.value=''; };
+let dragDepth = 0;
+window.addEventListener('dragenter', e => { if ([...(e.dataTransfer?.types||[])].includes('Files')){ dragDepth++; $('drop').hidden=false; } });
+window.addEventListener('dragleave', () => { if (--dragDepth<=0){ dragDepth=0; $('drop').hidden=true; } });
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => { e.preventDefault(); dragDepth=0; $('drop').hidden=true; readFile(e.dataTransfer?.files?.[0]); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => render());
+new MutationObserver(() => render()).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+load(makeSample());
+})();
+</script>
+</body>
+</html>
