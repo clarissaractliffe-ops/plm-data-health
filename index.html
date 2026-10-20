@@ -169,7 +169,7 @@ tr:last-child td{border-bottom:0}
     <details class="cols" id="colsDetails">
       <summary class="btn small" id="colsSummary">Columns checked</summary>
       <div class="cols-panel">
-        <p>Turn off columns that are allowed to be empty, such as comments.</p>
+        <p>Turn off columns that are allowed to be empty. Comment and note columns start turned off.</p>
         <div class="chips" id="colChips"></div>
       </div>
     </details>
@@ -292,7 +292,8 @@ const GLABEL = {collection:'Collection', supplier:'Supplier', category:'Category
 
 function load(data){
   D = data;
-  S.checked = D.fields.filter(f => f !== D.id);
+  S.checked = D.fields.filter(f => f !== D.id && !/comment|remark|note|calc/i.test(f));
+  if (!S.checked.length) S.checked = D.fields.filter(f => f !== D.id);
   S.coll = S.sup = S.cat = 'all'; S.field = null; S.search = ''; $('search').value = '';
   if (!D.groups[S.groupBy]) S.groupBy = ['supplier','collection','category'].find(k => D.groups[k]) || null;
   const real = !!D.source;
