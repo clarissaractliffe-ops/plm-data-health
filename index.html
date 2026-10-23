@@ -140,6 +140,75 @@ tr:last-child td{border-bottom:0}
 #copyBox textarea{width:100%;height:180px;font-family:var(--f-mono);font-size:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px}
 #copyBox .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-top:-6px;overflow-x:auto}
+.tabs button{font:inherit;font-family:var(--f-display);font-size:15.5px;font-weight:600;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:8px 14px 9px;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:6px 6px 0 0}
+.tab-n{font-family:var(--f-body);font-size:11.5px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--sunk);color:var(--muted)}
+.tabs button[aria-selected="true"] .tab-n{background:var(--accent-soft);color:var(--ink)}
+.view{display:flex;flex-direction:column;gap:18px;min-width:0}
+
+/* Cross-check: sources */
+.sources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.sources{grid-template-columns:minmax(0,1fr)}}
+.src{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.src.off{border-style:dashed;background:transparent}
+.src-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.src h3{margin:0;font-family:var(--f-display);font-size:16px;font-weight:600}
+.src .role{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.src .file{font-family:var(--f-mono);font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src .meta{font-size:13px}
+.src .meta b{font-variant-numeric:tabular-nums;font-weight:600}
+.src .hint{color:var(--muted);font-size:12.5px;margin:0}
+.src .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+.src .pill{font-size:11.5px;padding:3px 9px}
+
+/* Cross-check: mapping */
+details.mapping{padding:12px 18px}
+details.mapping[open]{padding-bottom:18px}
+details.mapping summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px}
+details.mapping summary::-webkit-details-marker{display:none}
+details.mapping summary > span:first-child{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0}
+details.mapping summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:6px}
+details.mapping .sub{color:var(--muted);font-size:12.5px}
+details.mapping > p.sub{margin:12px 0 8px}
+.maptable td,.maptable th{padding:6px 10px}
+.maptable td:first-child{font-weight:500;white-space:nowrap}
+.maptable select{min-width:170px;padding:5px 8px;font-size:13px}
+.maptable select.unset{color:var(--muted)}
+
+/* Cross-check: bars, list */
+.xbars .bar-row{grid-template-columns:minmax(90px,170px) minmax(0,1fr) 210px}
+.xbars .bar-row .val span{white-space:nowrap}
+.track.stack{display:flex}
+.track.stack .fill{border-radius:0}
+.track.stack .fill:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}
+.track.stack .fill:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px}
+.key{display:flex;flex-wrap:wrap;gap:6px 16px;margin:12px 8px 0;color:var(--muted);font-size:12.5px}
+.key span.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+@media (max-width:480px){.xbars .bar-row{grid-template-columns:minmax(0,1fr) auto}}
+.xseg{margin:0 0 12px;flex-wrap:wrap}
+.xseg .c{font-variant-numeric:tabular-nums;margin-left:5px;opacity:.75}
+.xlist td{vertical-align:top}
+.xlist td.fld{font-weight:500;white-space:nowrap}
+.vals{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:96px}
+.xv{display:block;padding:2px 6px;margin-left:-6px;border-radius:5px;max-width:240px;overflow-wrap:anywhere}
+.xv.off{background:color-mix(in srgb,var(--crit) 15%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--crit) 35%,var(--surface))}
+.xv.fill{background:color-mix(in srgb,var(--good) 17%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--good) 38%,var(--surface))}
+.xv.blank{color:var(--muted);font-style:italic}
+.xv .at{display:block;font-family:var(--f-mono);font-size:10.5px;color:var(--muted);font-style:normal;line-height:1.3}
+.na{color:var(--muted)}
+.itag{display:inline-block;font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.itag.diff{background:color-mix(in srgb,var(--crit) 16%,var(--surface));border-color:color-mix(in srgb,var(--crit) 35%,var(--surface))}
+.itag.fill{background:color-mix(in srgb,var(--good) 17%,var(--surface));border-color:color-mix(in srgb,var(--good) 38%,var(--surface))}
+.itag.empty{background:color-mix(in srgb,var(--warn) 18%,var(--surface));border-color:color-mix(in srgb,var(--warn) 40%,var(--surface))}
+.itag.nf{background:var(--sunk);border-color:var(--line)}
+.inote{display:block;color:var(--muted);font-size:12px;margin-top:4px;max-width:260px}
+.xempty{padding:28px 18px;text-align:center;color:var(--muted)}
+.xempty h2{color:var(--ink);margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -149,7 +218,7 @@ tr:last-child td{border-bottom:0}
     <div>
       <div class="eyebrow">Merchandising · Materials</div>
       <h1>PLM Data Health</h1>
-      <p class="lede">Which fields are empty in the PLM material export, and which suppliers to chase.</p>
+      <p class="lede" id="lede">Which fields are empty in the PLM material export, and which suppliers to chase.</p>
     </div>
     <div class="source">
       <span id="srcPill" class="pill">Sample data</span>
@@ -159,6 +228,11 @@ tr:last-child td{border-bottom:0}
     </div>
   </header>
   <p class="note" id="note">Showing invented example materials. Load an Excel or CSV export, or drop it on the page. The file is read in your browser and is not uploaded anywhere.</p>
+
+  <nav class="tabs" role="tablist" aria-label="View">
+    <button type="button" role="tab" id="tabMissing" aria-selected="true" aria-controls="viewMissing">Missing data</button>
+    <button type="button" role="tab" id="tabCheck" aria-selected="false" aria-controls="viewCheck" tabindex="-1">Cross-check <span class="tab-n num" id="tabCheckN" hidden></span></button>
+  </nav>
 
   <section class="filters" aria-label="Filters">
     <div class="f" id="fwColl"><label for="fColl">Collection</label><select id="fColl"></select></div>
@@ -175,6 +249,7 @@ tr:last-child td{border-bottom:0}
     </details>
   </section>
 
+  <div class="view" id="viewMissing" role="tabpanel" aria-labelledby="tabMissing">
   <section class="overview">
     <div class="panel">
       <div class="head"><div><h2>Completeness</h2><div class="sub" id="scopeLbl"></div></div></div>
@@ -212,6 +287,53 @@ tr:last-child td{border-bottom:0}
     <div class="scroll"><table class="list" id="list"></table></div>
     <p class="more" id="more"></p>
   </section>
+  </div>
+
+  <div class="view" id="viewCheck" role="tabpanel" aria-labelledby="tabCheck" hidden>
+    <section class="sources" id="sources" aria-label="Sources"></section>
+    <input id="filePan" class="vh" type="file" accept=".xlsx,.xls,.csv">
+    <input id="filePpt" class="vh" type="file" accept=".pptx">
+
+    <div id="checkBody" class="view">
+      <details class="panel mapping" id="xMapPanel">
+        <summary><span><h2>Fields compared</h2><span class="sub" id="xMapSum"></span></span><span class="btn small" aria-hidden="true">Change</span></summary>
+        <p class="sub">Materials are matched by code. Each PLM field is compared with the column picked here; set a field to "Not compared" to leave it out.</p>
+        <div class="scroll"><table class="maptable" id="xMap"></table></div>
+        <p class="sub" id="xUnused"></p>
+      </details>
+
+      <section class="overview">
+        <div class="panel">
+          <div class="head"><div><h2>Agreement</h2><div class="sub" id="xScope"></div></div></div>
+          <div class="donut-wrap">
+            <svg class="donut" id="xDonut" viewBox="0 0 150 150" role="img" aria-label="Materials by cross-check result"></svg>
+            <div class="legend" id="xLegend"></div>
+          </div>
+          <div class="stats" id="xStats"></div>
+        </div>
+        <div class="panel">
+          <div class="head"><div><h2>Differences by field</h2><div class="sub">Materials where the sources disagree, or where one of them is empty. Click a field to list them.</div></div></div>
+          <div class="bars xbars" id="xBars"></div>
+          <div class="key" id="xKey"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="xListPanel">
+        <div class="head">
+          <div><h2 id="xTitle">To resolve</h2><div class="sub" id="xSub"></div></div>
+          <div class="list-tools">
+            <span id="xFieldFilter"></span>
+            <input type="search" id="xSearch" placeholder="Search code or description" aria-label="Search discrepancies">
+            <button class="btn small" id="xCopy" type="button">Copy for Excel</button>
+            <button class="btn small primary" id="xDownload" type="button">Download Excel report</button>
+          </div>
+        </div>
+        <div class="seg xseg" id="xIssueSeg" role="group" aria-label="Show"></div>
+        <div class="scroll"><table class="list xlist" id="xList"></table></div>
+        <p class="more" id="xMore"></p>
+      </section>
+    </div>
+  </div>
 </div>
 
 <div id="drop" hidden>Drop the PLM export to check it</div>
@@ -297,6 +419,11 @@ function load(data){
   S.coll = S.sup = S.cat = 'all'; S.field = null; S.search = ''; $('search').value = '';
   if (!D.groups[S.groupBy]) S.groupBy = ['supplier','collection','category'].find(k => D.groups[k]) || null;
   const real = !!D.source;
+  D._src = null; nearCache.clear();
+  OTHERS.forEach(k => { if (X[k] && X[k].sample) X[k] = null; });
+  if (!real && !X.pan && !X.ppt){ const s = makeCheckSample(); X.pan = s.pan; X.ppt = s.ppt; }
+  OTHERS.forEach(k => { if (X[k]) X.map[k] = autoMap(X[k]); });
+  X.field = null; X.search = ''; X.showAll = false; $('xSearch').value = '';
   $('srcPill').textContent = real ? `${D.source} · ${D.rows.length} rows` : `Sample data · ${D.rows.length} materials`;
   $('srcPill').classList.toggle('real', real);
   $('resetBtn').hidden = !real;
@@ -365,20 +492,9 @@ function render(){
   miss.forEach(m => { const k=m.length; b[k===0?0:k===1?1:k<=3?2:3]++; });
   const cols = [cssv('--good'), cssv('--mild'), cssv('--warn'), cssv('--crit')];
   const labels = ['Complete','1 field missing','2–3 fields missing','4 or more missing'];
-  const R0 = 58, C = 2*Math.PI*R0; let off = 0;
-  let svg = `<circle cx="75" cy="75" r="${R0}" fill="none" stroke="${cssv('--sunk')}" stroke-width="18"/>`;
-  if (n) b.forEach((v,i) => {
-    if (!v) return;
-    const len = v/n*C;
-    svg += `<circle cx="75" cy="75" r="${R0}" fill="none" stroke="${cols[i]}" stroke-width="18" stroke-dasharray="${Math.max(len-1.5,0.5)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)"/>`;
-    off += len;
-  });
   const cells = n*F.length, missCells = miss.reduce((s,m)=>s+m.length,0);
   const filled = cells ? 1 - missCells/cells : 1;
-  svg += `<text x="75" y="74" text-anchor="middle" font-family="Familjen Grotesk, Helvetica, Arial, sans-serif" font-size="28" font-weight="600">${n ? Math.round(b[0]/n*100) : 0}%</text>
-          <text x="75" y="94" text-anchor="middle" font-size="11" style="fill:var(--muted)">complete</text>`;
-  $('donut').innerHTML = svg;
-  $('legend').innerHTML = labels.map((l,i) => `<div><span class="sw" style="background:${cols[i]}"></span>${l}<span class="n num">${b[i]}</span></div>`).join('');
+  drawDonut($('donut'), $('legend'), b, cols, labels, 'complete');
 
   const ranked = F.map(f => ({f, c:fieldCount[f], p: n ? fieldCount[f]/n : 0})).sort((x,y) => y.c - x.c || F.indexOf(x.f)-F.indexOf(y.f));
   const gaps = ranked.filter(x => x.c > 0), full = ranked.filter(x => x.c === 0);
@@ -400,6 +516,23 @@ function render(){
 
   renderHeat(rows, miss, gaps.map(x=>x.f));
   renderList(rows, miss);
+  renderCheck();
+}
+
+function drawDonut(svgEl, legEl, b, cols, labels, word){
+  const n = b.reduce((s,v)=>s+v,0);
+  const R0 = 58, C = 2*Math.PI*R0; let off = 0;
+  let svg = `<circle cx="75" cy="75" r="${R0}" fill="none" stroke="${cssv('--sunk')}" stroke-width="18"/>`;
+  if (n) b.forEach((v,i) => {
+    if (!v) return;
+    const len = v/n*C;
+    svg += `<circle cx="75" cy="75" r="${R0}" fill="none" stroke="${cols[i]}" stroke-width="18" stroke-dasharray="${Math.max(len-1.5,0.5)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)"/>`;
+    off += len;
+  });
+  svg += `<text x="75" y="74" text-anchor="middle" font-family="Familjen Grotesk, Helvetica, Arial, sans-serif" font-size="28" font-weight="600">${n ? Math.round(b[0]/n*100) : 0}%</text>
+          <text x="75" y="94" text-anchor="middle" font-size="11" style="fill:var(--muted)">${word}</text>`;
+  svgEl.innerHTML = svg;
+  legEl.innerHTML = labels.map((l,i) => `<div><span class="sw" style="background:${cols[i]}"></span>${l}<span class="n num">${b[i]}</span></div>`).join('');
 }
 
 function renderHeat(rows, miss, gapFields){
@@ -512,6 +645,654 @@ $('fieldFilter').onclick = e => { if (e.target.id==='clearField'){ S.field=null;
 document.addEventListener('click', e => { const d = $('colsDetails'); if (d.open && !d.contains(e.target)) d.open = false; });
 $('resetBtn').onclick = () => load(makeSample());
 
+/* =====================================================================
+   Cross-check: PLM vs Panorama vs the merch PowerPoint
+   Materials are matched by code. For every PLM field mapped to a column
+   in another source, values are compared after normalising formats
+   (decimal commas, currency signs, units, fibre codes, country codes).
+   ===================================================================== */
+const SRCN = {plm:'PLM', pan:'Panorama', ppt:'PowerPoint'};
+const OTHERS = ['pan','ppt'];
+const X = {pan:null, ppt:null, map:{pan:{}, ppt:{}}, issue:'all', field:null, search:'', showAll:false, res:null};
+let view = 'missing';
+const TYPES = {diff:'Different values', fill:'PLM empty, filled elsewhere', empty:'Empty in another source', nf:'Code not found'};
+const TSHORT = {diff:'Different values', fill:'Fill PLM gap', empty:'Empty elsewhere', nf:'Code not found'};
+const TORDER = ['diff','fill','empty','nf'];
+const nearCache = new Map();
+
+const normCode = v => String(v ?? '').trim().toUpperCase().replace(/\s+/g,'');
+const shapeOf = c => c.replace(/[A-Z]/g,'A').replace(/[0-9]/g,'9');
+const deacc = s => String(s ?? '').normalize('NFKD').replace(/[̀-ͯ]/g,'');
+const nname = s => deacc(s).toLowerCase().replace(/[^a-z0-9]+/g,'');
+
+/* Which kind of field a column holds, from its header (EN / FR / ES / IT) */
+const KEYS = [
+  ['supcode', /(supplier|vendor|fournisseur|proveedor|fornitore)\s*(code|id|no|n°|#)/i],
+  ['unit', /price\s*unit|unit[ée]|\bunit\b|\buom\b/i],
+  ['currency', /currenc|devise|moneda|valuta/i],
+  ['price', /price|prix|precio|prezzo|cost|coste|co[uû]t|tarif/i],
+  ['moq', /\bmoq\b|minimum|min\.?\s*(order|qty|quantity|commande)/i],
+  ['lead', /lead\s*-?\s*time|d[ée]lai|plazo|\blt\b/i],
+  ['comp', /compo/i],
+  ['weight', /weight|poids|peso|gramm|\bgsm\b/i],
+  ['width', /width|laize|ancho|altezza|skin\s*size/i],
+  ['country', /country|origin|pa[ií]s|paese/i],
+  ['colour', /colou?rs?\b|coloris|colores|colori/i],
+  ['cert', /certif/i],
+  ['supplier', /supplier|vendor|fournisseur|proveedor|fornitore|\bmill\b/i],
+  ['collection', /collection|season|saison|temporada|stagione/i],
+  ['category', /categor|famil/i],
+  ['status', /status|statut|estado|stato/i],
+  ['desc', /desc|libell|d[ée]signation|\bname\b|^material$|^mati[eè]re$|^tejido$|^tessuto$/i]
+];
+const fieldKey = name => (KEYS.find(([,re]) => re.test(String(name))) || [null])[0];
+
+/* ---- Value comparison ---- */
+const FIBRE = {wv:'wool',wo:'wool',wool:'wool',laine:'wool',lana:'wool',merino:'wool',ws:'cashmere',cashmere:'cashmere',cachemire:'cashmere',wk:'camel',wm:'mohair',mohair:'mohair',wa:'alpaca',alpaca:'alpaca',
+  co:'cotton',cotton:'cotton',coton:'cotton',algodon:'cotton',cotone:'cotton',li:'linen',cl:'linen',linen:'linen',lin:'linen',lino:'linen',se:'silk',silk:'silk',soie:'silk',seda:'silk',seta:'silk',
+  vi:'viscose',cv:'viscose',viscose:'viscose',viscosa:'viscose',md:'modal',cmd:'modal',modal:'modal',ly:'lyocell',cly:'lyocell',lyocell:'lyocell',tencel:'lyocell',cu:'cupro',cupro:'cupro',
+  pa:'polyamide',polyamide:'polyamide',nylon:'polyamide',poliamida:'polyamide',poliammide:'polyamide',pes:'polyester',pl:'polyester',polyester:'polyester',poliester:'polyester',poliestere:'polyester',
+  ea:'elastane',el:'elastane',elastane:'elastane',elasthanne:'elastane',elastano:'elastane',spandex:'elastane',lycra:'elastane',pu:'polyurethane',polyurethane:'polyurethane',
+  pc:'acrylic',acrylic:'acrylic',acrylique:'acrylic',acrilico:'acrylic',ram:'ramie',ramie:'ramie',leather:'leather',cuir:'leather',piel:'leather',pelle:'leather'};
+const FIBRES = new Set(Object.values(FIBRE));
+const COUNTRY = {it:'italy',italia:'italy',italie:'italy',es:'spain',espana:'spain',espagne:'spain',spagna:'spain',fr:'france',francia:'france',jp:'japan',japon:'japan',giappone:'japan',
+  pt:'portugal',cn:'china',chine:'china',in:'india',inde:'india',tr:'turkey',turkiye:'turkey',turquie:'turkey',turquia:'turkey',de:'germany',allemagne:'germany',alemania:'germany',
+  gb:'united kingdom',uk:'united kingdom','royaume-uni':'united kingdom','reino unido':'united kingdom',us:'united states',usa:'united states',ma:'morocco',maroc:'morocco',marruecos:'morocco',
+  ro:'romania',tn:'tunisia',tunisie:'tunisia',vn:'vietnam','viet nam':'vietnam',kr:'south korea',korea:'south korea',ch:'switzerland',suisse:'switzerland',be:'belgium',nl:'netherlands',at:'austria'};
+const STOP = new Set(['and','y','et','e','de','of','with','con','avec','the','di']);
+const LEGAL = new Set(['spa','s.p.a','srl','s.r.l','sl','s.l','sa','s.a','sas','sarl','ltd','limited','gmbh','inc','bv','kk','sae']);
+const isNum = t => /^\d+(\.\d+)?%?$/.test(t);
+const isBlank = v => isMissing(v) || /^(tb[cda]|n\/?a|pending|to be (confirmed|defined))\b/i.test(String(v).replace(/[€$£\s]+/g,' ').trim());
+const tokCache = new Map();
+function toks(v){
+  const key = String(v ?? '');
+  if (tokCache.has(key)) return tokCache.get(key);
+  let s = deacc(key).toLowerCase();
+  s = s.replace(/(\d),(\d{1,2})(?!\d)/g,'$1.$2').replace(/(\d)[,'  ](\d{3})(?!\d)/g,'$1$2')
+       .replace(/g\s*\/\s*m\s*[2²]|\bgsm\b|g\/sqm/g,' gsm ').replace(/\bsq\.?\s*ft\b|\bft\s*[2²]|\bsqft\b/g,' sqft ').replace(/\bm\s*[2²]\b|\bsqm\b/g,' sqm ')
+       .replace(/\b(weeks?|wks?|semaines?|semanas?|settimane|sem)\b/g,' wk ').replace(/€|\beur(os?)?\b|\$|£|\busd\b|\bgbp\b/g,' ')
+       .replace(/(\d)([a-z])/g,'$1 $2').replace(/(\d)\s+%/g,'$1%');
+  const t = s.split(/[^a-z0-9.%]+/).map(x => x.replace(/^\.+|\.+$/g,'')).filter(x => x && x !== '%' && !STOP.has(x));
+  if (tokCache.size > 20000) tokCache.clear();
+  tokCache.set(key, t);
+  return t;
+}
+/* Composition as sorted "pct:fibre:qualifiers", so "98% CO 2% EA" = "Cotton 98%, elastane 2%" */
+function compKey(t){
+  const p = t.map((x,i) => x.endsWith('%') && isNum(x) ? i : -1).filter(i => i >= 0);
+  if (!p.length) return null;
+  const before = !isNum(t[0]);
+  const keys = p.map((pi,n) => {
+    const seg = before ? t.slice(n ? p[n-1]+1 : 0, pi) : t.slice(pi+1, n+1 < p.length ? p[n+1] : t.length);
+    const words = seg.filter(w => !isNum(w)).map(w => FIBRE[w] || w);
+    const fi = words.findIndex(w => FIBRES.has(w));
+    const fibre = fi >= 0 ? words[fi] : (words[0] || '');
+    const quals = words.filter((w,i) => i !== (fi >= 0 ? fi : 0)).sort();
+    return `${parseFloat(t[pi])}:${fibre}:${quals.join(',')}`;
+  });
+  return keys.sort().join('|');
+}
+function same(a, b){
+  const A = deacc(a).trim().toLowerCase().replace(/\s+/g,' '), B = deacc(b).trim().toLowerCase().replace(/\s+/g,' ');
+  if (A === B || (COUNTRY[A] || A) === (COUNTRY[B] || B)) return true;
+  const ta = toks(a), tb = toks(b);
+  const ca = compKey(ta), cb = compKey(tb);
+  if (ca && cb) return ca === cb;
+  if ([...ta].sort().join(' ') === [...tb].sort().join(' ')) return true;
+  const la = ta.filter(x => !LEGAL.has(x)), lb = tb.filter(x => !LEGAL.has(x));
+  if (la.length && [...la].sort().join(' ') === [...lb].sort().join(' ')) return true;
+  const na = ta.filter(isNum).map(parseFloat).sort((x,y)=>x-y), nb = tb.filter(isNum).map(parseFloat).sort((x,y)=>x-y);
+  if (!na.length || na.length !== nb.length) return false;
+  if (!na.every((x,i) => Math.abs(x-nb[i]) <= Math.max(1e-9, 0.005*Math.max(Math.abs(x), Math.abs(nb[i]))))) return false;
+  const wa = new Set(ta.filter(x => !isNum(x))), wb = new Set(tb.filter(x => !isNum(x)));
+  const sub = (p,q) => [...p].every(x => q.has(x));
+  return sub(wa,wb) || sub(wb,wa);
+}
+function lev(a, b, max){
+  if (Math.abs(a.length-b.length) > max) return max+1;
+  let prev = Array.from({length:b.length+1}, (_,i) => i), pp = prev;
+  for (let i=1;i<=a.length;i++){
+    const cur = [i]; let mn = i;
+    for (let j=1;j<=b.length;j++){
+      let v = Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+(a[i-1]===b[j-1]?0:1));
+      if (i>1 && j>1 && a[i-1]===b[j-2] && a[i-2]===b[j-1]) v = Math.min(v, pp[j-2]+1);
+      cur.push(v); if (v<mn) mn=v;
+    }
+    if (mn > max) return max+1;
+    pp = prev; prev = cur;
+  }
+  return prev[b.length];
+}
+function nearest(c){
+  if (nearCache.has(c)) return nearCache.get(c);
+  // Suggest a PLM code only when it's clear: two characters swapped, or a single one-character difference
+  const hits = [], sorted = x => [...x].sort().join('');
+  for (const [k,r] of plmSrc().recs) if (lev(c, k, 1) === 1) hits.push({code:r.code, swap: k.length === c.length && sorted(k) === sorted(c)});
+  const swaps = hits.filter(h => h.swap);
+  const best = swaps.length && swaps.length <= 2 ? swaps.map(h => h.code).join(' or ') : hits.length === 1 ? hits[0].code : null;
+  nearCache.set(c, best);
+  return best;
+}
+
+/* ---- Sources ---- */
+function buildSource(file, fields, idCol, rows, extra, descCol){
+  const recs = new Map();
+  const dc = descCol !== undefined ? descCol : (fields.find(f => f !== idCol && fieldKey(f) === 'desc') || null);
+  rows.forEach(({o, at}) => {
+    const c = normCode(o[idCol]); if (!c) return;
+    const r = recs.get(c) || {code:String(o[idCol]).trim(), desc:'', vals:{}, at:[]};
+    if (!r.desc && dc && !isMissing(o[dc])) r.desc = String(o[dc]).trim();
+    r.at.push(at);
+    fields.forEach(f => { if (f !== idCol) (r.vals[f] ||= []).push({v:o[f], at}); });
+    recs.set(c, r);
+  });
+  return Object.assign({file, fields:fields.filter(f => f !== idCol), idCol, recs}, extra || {});
+}
+function plmSrc(){
+  if (!D._src) D._src = buildSource(D.source || 'Sample data', D.fields, D.id,
+    D.rows.map((o,i) => ({o, at: D.source ? `row ${o.__rowNum__ != null ? o.__rowNum__+1 : i+2}` : ''})), null, D.desc);
+  return D._src;
+}
+const ID_RE = /\b(code|ref|reference|r[ée]f[ée]rence|article|material ?(id|code)|sku|c[oó]digo|codice)\b/i;
+
+/* Excel / CSV export (Panorama). Picks the sheet and the code column that best match the PLM codes. */
+function sheetToSource(wb, file){
+  const known = new Set(plmSrc().recs.keys());
+  let best = null;
+  wb.SheetNames.forEach(name => {
+    const ws = wb.Sheets[name]; if (!ws || !ws['!ref']) return;
+    const r0 = XLSX.utils.decode_range(ws['!ref']).s.r;
+    const aoa = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false, blankrows:true});
+    if (!aoa.length) return;
+    const textCells = aoa.slice(0,20).map(row => (row||[]).filter(v => String(v).trim() && !/^[\d.,\s%€$£-]+$/.test(String(v))).length);
+    const M = Math.max(...textCells);
+    const h = textCells.findIndex(c => c >= Math.max(2, 0.6*M));
+    if (h < 0) return;
+    const width = Math.max(...aoa.map(r => (r||[]).length));
+    const names = [];
+    for (let j=0;j<width;j++){ const n = String(aoa[h][j] ?? '').trim() || `Column ${j+1}`; let k = n, q = 2; while (names.includes(k)) k = `${n} (${q++})`; names.push(k); }
+    const rows = [];
+    for (let i=h+1;i<aoa.length;i++){
+      const row = aoa[i]; if (!row || !row.some(v => String(v).trim())) continue;
+      const o = {}; names.forEach((n,j) => o[n] = row[j] ?? ''); rows.push({o, at:`row ${r0+i+1}`});
+    }
+    if (!rows.length) return;
+    const ov = names.map(n => rows.reduce((s,x) => s + (known.has(normCode(x.o[n])) ? 1 : 0), 0));
+    let j = ov.indexOf(Math.max(...ov));
+    if (ov[j] === 0){ const re = findCol(names, ID_RE); j = re ? names.indexOf(re) : 0; }
+    const fields = names.filter(n => !/^Column \d+$/.test(n) || rows.some(x => !isMissing(x.o[n])));
+    const score = ov[j]*1e6 + rows.length;
+    if (!best || score > best.score) best = {score, name, fields, id:names[j], rows};
+  });
+  if (!best) throw new Error('No table found in that file.');
+  return buildSource(file, best.fields, best.id, best.rows, {sheet:best.name, kind:'sheet'});
+}
+
+/* PowerPoint (.pptx). Reads tables (codes in a row or a column) and text boxes ("Price: 45 €" under a code). */
+const NS_A = 'http://schemas.openxmlformats.org/drawingml/2006/main', NS_P = 'http://schemas.openxmlformats.org/presentationml/2006/main', NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+function needLib(name, url){
+  if (window[name]) return Promise.resolve();
+  return new Promise((res, rej) => {
+    const s = document.createElement('script'); s.src = url;
+    s.onload = () => window[name] ? res() : rej(new Error('The PowerPoint reader did not load. Check your connection and reload.'));
+    s.onerror = () => rej(new Error('The PowerPoint reader did not load. Check your connection and reload.'));
+    document.head.appendChild(s);
+  });
+}
+function insideTable(node, stop){ for (let n = node.parentNode; n && n !== stop; n = n.parentNode) if (n.localName === 'tbl') return true; return false; }
+function paraLines(node, allowTable){
+  const out = [];
+  for (const p of node.getElementsByTagNameNS(NS_A, 'p')){
+    if (!allowTable && insideTable(p, node)) continue;
+    let s = '';
+    const walk = el => { for (const c of el.childNodes){ if (c.nodeType !== 1) continue; if (c.localName === 't') s += c.textContent; else if (c.localName === 'br') s += '\n'; else walk(c); } };
+    walk(p);
+    s.split('\n').forEach(l => { if (l.trim()) out.push(l.replace(/ /g,' ')); });
+  }
+  return out;
+}
+async function pptxToSource(buf, file){
+  await needLib('JSZip', 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+  const zip = await JSZip.loadAsync(buf);
+  const xml = async p => { const f = zip.file(p); return f ? new DOMParser().parseFromString(await f.async('string'), 'application/xml') : null; };
+  let order = [];
+  const pres = await xml('ppt/presentation.xml'), rels = await xml('ppt/_rels/presentation.xml.rels');
+  if (pres && rels){
+    const map = {}; for (const r of rels.getElementsByTagName('Relationship')) map[r.getAttribute('Id')] = r.getAttribute('Target');
+    order = [...pres.getElementsByTagNameNS(NS_P, 'sldId')].map(s => map[s.getAttributeNS(NS_R, 'id') || s.getAttribute('r:id')]).filter(Boolean)
+      .map(t => t.startsWith('/') ? t.slice(1) : 'ppt/' + t.replace(/^\.\//,''));
+  }
+  if (!order.length) order = Object.keys(zip.files).filter(p => /^ppt\/slides\/slide\d+\.xml$/.test(p)).sort((a,b) => parseInt(a.match(/\d+/g).pop()) - parseInt(b.match(/\d+/g).pop()));
+  if (!order.length) throw new Error('No slides found. Is it a PowerPoint (.pptx) file?');
+
+  const known = new Set([...plmSrc().recs.keys(), ...(X.pan ? X.pan.recs.keys() : [])]);
+  const shapes = new Set([...known].map(shapeOf));
+  const isCode = n => known.has(n) || (n.length >= 5 && /\d/.test(n) && /[A-Z]/.test(n) && shapes.has(shapeOf(n)));
+  const findCodes = text => {
+    const out = [];
+    String(text).split(/[\s,;:()\[\]{}"'“”‘’|\/]+/).forEach(tok => { const t = tok.replace(/^[.\-–]+|[.\-–]+$/g,''); const n = normCode(t); if (t && isCode(n) && !out.some(x => x.n === n)) out.push({tok:t, n}); });
+    return out;
+  };
+  const recs = new Map(), fields = [];
+  const rec = (n, tok, at, desc) => {
+    const r = recs.get(n) || {code:tok, desc:'', vals:{}, at:[]};
+    if (!r.at.includes(at)) r.at.push(at);
+    if (!r.desc && desc) r.desc = desc;
+    recs.set(n, r); return r;
+  };
+  const put = (n, field, v, at) => { const r = recs.get(n); if (!r) return; if (!fields.includes(field)) fields.push(field); (r.vals[field] ||= []).push({v, at}); };
+  const descOf = (line, tok) => line.replace(tok, '').replace(/^[\s:–—-]+|[\s:–—-]+$/g,'').slice(0, 60);
+  let hidden = 0, tables = 0, used = 0;
+
+  const doGrid = (g, at) => {
+    const rowsN = g.length, colsN = Math.max(...g.map(r => r.length));
+    let bj = -1, bc = 0;
+    for (let j=0;j<colsN;j++){ const c = g.reduce((s,r) => s + (findCodes(r[j] || '').length ? 1 : 0), 0); if (c > bc){ bc = c; bj = j; } }
+    if (bj < 0){ const hj = (g[0] || []).findIndex(h => ID_RE.test(h)); if (hj < 0) return false; bj = hj; }
+    const first = g.findIndex(r => findCodes(r[bj] || '').length || (bc === 0 && r !== g[0] && String(r[bj]||'').trim()));
+    const h = first > 0 ? first - 1 : -1;
+    let any = false;
+    for (let i = Math.max(first,0); i < rowsN; i++){
+      const cell = g[i][bj] || ''; const cs = findCodes(cell);
+      const c = cs[0] || (bc === 0 && cell.trim() ? {tok:cell.trim(), n:normCode(cell)} : null);
+      if (!c) continue;
+      any = true; rec(c.n, c.tok, at, descOf(cell, c.tok));
+      for (let j=0;j<colsN;j++){ if (j === bj) continue; const name = (h >= 0 && String(g[h][j]||'').trim()) || `Column ${j+1}`; put(c.n, name, g[i][j] ?? '', at);
+        const r = recs.get(c.n); if (!r.desc && fieldKey(name) === 'desc' && String(g[i][j]||'').trim()) r.desc = String(g[i][j]).trim(); }
+    }
+    return any;
+  };
+
+  for (let si=0; si<order.length; si++){
+    const doc = await xml(order[si]); if (!doc) continue;
+    if (doc.documentElement.getAttribute('show') === '0'){ hidden++; continue; }
+    const at = `slide ${si+1}`; let found = false;
+    for (const tbl of doc.getElementsByTagNameNS(NS_A, 'tbl')){
+      const grid = [...tbl.getElementsByTagNameNS(NS_A, 'tr')].map(tr => [...tr.children].filter(c => c.localName === 'tc')
+        .map(tc => (tc.getAttribute('hMerge') || tc.getAttribute('vMerge')) ? '' : paraLines(tc, true).join(' ').trim()));
+      if (!grid.length) continue;
+      tables++;
+      const colHits = Math.max(0, ...grid[0].map((_,j) => grid.reduce((s,r) => s + (findCodes(r[j]||'').length ? 1 : 0), 0)));
+      const rowHits = Math.max(0, ...grid.map(r => r.reduce((s,c) => s + (findCodes(c).length ? 1 : 0), 0)));
+      const g = rowHits > colHits ? grid[0].map((_,j) => grid.map(r => r[j] ?? '')) : grid;
+      if (doGrid(g, at)) found = true;
+    }
+    const tree = doc.getElementsByTagNameNS(NS_P, 'spTree')[0];
+    const units = tree ? [...tree.children].filter(n => n.localName === 'sp' || n.localName === 'grpSp').map(u => paraLines(u, false)) : [];
+    const slideCodes = new Set(units.flat().flatMap(l => findCodes(l).map(x => x.n)));
+    units.forEach(lines => {
+      const unitHas = lines.some(l => findCodes(l).length);
+      let cur = !unitHas && slideCodes.size === 1 ? [...slideCodes][0] : null;
+      lines.forEach(l => {
+        const cs = findCodes(l);
+        const m = l.match(/^\s*([^:：\t]{1,32}?)\s*(?:[:：]|\t+)\s*(.+?)\s*$/);
+        if (cs.length){
+          const labelled = m && ID_RE.test(m[1]);
+          cs.forEach(x => rec(x.n, x.tok, at, cs.length === 1 && !labelled ? descOf(l, x.tok) : ''));
+          cur = cs[cs.length-1].n; found = true; return;
+        }
+        if (m && cur){ rec(cur, recs.get(cur)?.code || cur, at, ''); put(cur, m[1].trim(), m[2].trim(), at); }
+      });
+    });
+    if (found) used++;
+  }
+  if (!recs.size) throw new Error('No material codes found in that deck. Codes must match the PLM export.');
+  return {file, fields, idCol:null, recs, kind:'pptx', slides:order.length - hidden, used, hidden, tables};
+}
+
+/* Field mapping: same header first, then same kind of field */
+function autoMap(src){
+  const m = {}, used = new Set();
+  const plmF = D.fields.filter(f => f !== D.id && !/comment|remark|note|created|modified/i.test(f));
+  plmF.forEach(f => { const c = src.fields.find(s => !used.has(s) && nname(s) === nname(f)); if (c){ m[f] = c; used.add(c); } });
+  plmF.forEach(f => { if (m[f]) return; const k = fieldKey(f); if (!k || k === 'desc' && !D.desc) return;
+    const c = src.fields.find(s => !used.has(s) && fieldKey(s) === k); if (c){ m[f] = c; used.add(c); } });
+  return m;
+}
+
+/* ---- The check ---- */
+function computeCheck(){
+  const others = OTHERS.filter(k => X[k]);
+  if (!others.length) return null;
+  const P = plmSrc();
+  const filtered = S.coll !== 'all' || S.sup !== 'all' || S.cat !== 'all';
+  const inScope = new Set(scoped().map(r => normCode(r[D.id])));
+  const F = D.fields.filter(f => f !== D.id && others.some(k => X.map[k][f]));
+  const codes = new Set([...P.recs.keys(), ...others.flatMap(k => [...X[k].recs.keys()])]);
+  const issues = [], state = new Map(), byField = Object.fromEntries(F.map(f => [f, {diff:0, fill:0, empty:0}]));
+  const rank = {ok:0, fill:1, empty:1, nf:2, diff:3};
+  const bump = (c, t) => { if ((rank[t] ?? 0) > (rank[state.get(c)] ?? -1)) state.set(c, t); };
+  let compared = 0;
+  for (const c of codes){
+    const pr = P.recs.get(c);
+    if (filtered && !(pr && inScope.has(c))) continue;
+    const has = {plm:!!pr}; others.forEach(k => has[k] = X[k].recs.has(c));
+    const present = ['plm', ...others].filter(k => has[k]);
+    const code = (pr || X[present[0]].recs.get(c)).code;
+    const desc = pr?.desc || others.map(k => X[k].recs.get(c)?.desc).find(Boolean) || '';
+    if (present.length >= 2){ state.set(c, 'ok'); }
+    if (!pr){
+      const missingFrom = ['plm', ...(X.pan ? ['pan'] : [])].filter(k => !has[k]).map(k => SRCN[k]);
+      const near = nearest(c);
+      issues.push({c, code, desc, field:null, type:'nf', note:`Not in ${missingFrom.join(' or ')}${near ? `. Typo of ${near}?` : ''}`, has});
+      bump(c, 'nf'); continue;
+    }
+    if (X.pan && !has.pan){ issues.push({c, code, desc, field:null, type:'nf', note:'In PLM, not in Panorama', has}); bump(c, 'nf'); }
+    if (present.length >= 2) compared++;
+    for (const f of F){
+      const e = {plm: pr.vals[f] || []};
+      others.forEach(k => { const col = X.map[k][f]; const r = X[k].recs.get(c); e[k] = !col ? 'nomap' : r ? (r.vals[col] || []) : 'absent'; });
+      const arr = k => Array.isArray(e[k]) ? e[k] : [];
+      const filled = ['plm', ...others].flatMap(k => arr(k).filter(x => !isBlank(x.v)).map(x => ({k, v:x.v})));
+      if (!filled.length) continue;
+      const reps = []; filled.forEach(x => { if (!reps.some(r => same(r.v, x.v))) reps.push(x); });
+      const plmV = arr('plm').find(x => !isBlank(x.v));
+      let type = null, note = '';
+      if (reps.length > 1){
+        type = 'diff';
+        const ref = plmV ? plmV.v : reps[0].v;
+        const off = others.filter(k => arr(k).some(x => !isBlank(x.v) && !same(x.v, ref)));
+        const self = ['plm', ...others].filter(k => { const vs = arr(k).filter(x => !isBlank(x.v)); return vs.some(x => !same(x.v, vs[0].v)); });
+        const parts = [];
+        if (self.length) parts.push(self.map(k => `${SRCN[k]} has ${new Set(arr(k).filter(x=>!isBlank(x.v)).map(x=>String(x.v).trim())).size} values`).join('; '));
+        if (plmV && off.length) parts.push(`${off.map(k => SRCN[k]).join(' and ')} ${off.length > 1 ? 'differ' : 'differs'} from PLM`);
+        if (!plmV) parts.push(`PLM empty; ${others.filter(k => arr(k).some(x=>!isBlank(x.v))).map(k=>SRCN[k]).join(' and ')} disagree`);
+        note = parts.join('. ');
+      } else if (!plmV){
+        type = 'fill'; note = `${others.filter(k => arr(k).some(x => !isBlank(x.v))).map(k => SRCN[k]).join(' and ')} has it`;
+      } else {
+        const emptyIn = others.filter(k => arr(k).length && arr(k).every(x => isBlank(x.v)));
+        if (emptyIn.length){ type = 'empty'; note = `Filled in PLM, empty in ${emptyIn.map(k => SRCN[k]).join(' and ')}`; }
+      }
+      if (!type) continue;
+      issues.push({c, code, desc, field:f, type, note, e, ref: plmV ? plmV.v : reps[0].v});
+      byField[f][type]++; bump(c, type);
+    }
+  }
+  const count = {diff:0, fill:0, empty:0, nf:0}; issues.forEach(i => count[i.type]++);
+  const b = [0,0,0,0];
+  state.forEach(s => b[s === 'ok' ? 0 : s === 'fill' || s === 'empty' ? 1 : s === 'diff' ? 2 : 3]++);
+  return {issues, count, byField, F, buckets:b, codes:state.size, compared, others,
+    diffCodes: new Set(issues.filter(i => i.type === 'diff').map(i => i.c)).size};
+}
+
+/* ---- Invented sample: a Panorama export and a merch deck built from the sample PLM data ---- */
+function makeCheckSample(){
+  let a = 20261023;
+  const R = () => { a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; };
+  const pick = arr => arr[Math.floor(R()*arr.length)];
+  const between = (lo,hi) => Math.round(lo + R()*(hi-lo));
+  const ISO = {Italy:'IT', Spain:'ES', France:'FR', Japan:'JP'};
+  const CODE = {wool:'WV', cotton:'CO', elastane:'EA', polyamide:'PA', mohair:'WM', cashmere:'WS', silk:'SE', viscose:'CV', polyester:'PES'};
+  const rows = D.rows, codes = new Set(rows.map(r => r.Code));
+  const sups = [...new Set(rows.map(r => r.Supplier))];
+  const comps = {}; rows.forEach(r => { if (!isMissing(r.Composition)) (comps[r.Category] ||= new Set()).add(r.Composition); });
+  const otherComp = r => { const l = [...(comps[r.Category] || [])].filter(c => c !== r.Composition); return l.length ? pick(l) : r.Composition; };
+  const typo = c => { for (let k=0;k<20;k++){ const d = c.replace(/(\d)(\d)$/, (m,x,y) => y + x); const t = d !== c ? d : c.slice(0,-1) + ((+c.slice(-1)+between(1,8))%10); if (!codes.has(t)) return t; c = pick(rows).Code; } return c + 'X'; };
+  const money = v => (+v).toFixed(2);
+
+  const pan = [];
+  rows.forEach(r => {
+    if (R() < 0.05) return;
+    const o = {'Material code':r.Code, 'Description':r.Description, 'Supplier':r.Supplier, 'Price':r.Price, 'MOQ':r.MOQ, 'Lead time (weeks)':r['Lead time (wks)'], 'Composition':r.Composition, 'Origin':r['Country of origin']};
+    if (isMissing(r.Price) && R() < 0.3) o.Price = money(9 + R()*100);
+    if (isMissing(r['Lead time (wks)']) && R() < 0.25) o['Lead time (weeks)'] = between(3,14);
+    if (isMissing(r.MOQ) && R() < 0.2) o.MOQ = pick([50,100,300]);
+    if (isMissing(r['Country of origin']) && R() < 0.3) o.Origin = sups.length ? ({'Lanificio Ardesia':'Italy','Tessitura Morano':'Italy','Hilaturas Ebro':'Spain','Conceria Valdarno':'Italy','Kōzan Weaving':'Japan','Soieries Bellecour':'France','Pieles del Guadalete':'Spain'}[r.Supplier] || '') : '';
+    if (!isMissing(r.Price) && R() < 0.08) o.Price = money(r.Price * (1 + pick([-0.12,-0.08,0.06,0.1,0.15])));
+    if (!isMissing(r.MOQ) && R() < 0.04) o.MOQ = pick([50,100,150,300,500].filter(x => x != r.MOQ));
+    if (!isMissing(r['Lead time (wks)']) && R() < 0.06) o['Lead time (weeks)'] = Math.max(2, +r['Lead time (wks)'] + pick([-2,-1,2,3]));
+    if (!isMissing(r.Composition) && R() < 0.025) o.Composition = otherComp(r);
+    if (R() < 0.015) o.Supplier = pick(sups.filter(s => s !== r.Supplier));
+    // formatting differences that must NOT be flagged
+    if (!isMissing(o.Origin) && R() < 0.4) o.Origin = ISO[o.Origin] || o.Origin;
+    if (!isMissing(o.Composition) && R() < 0.35) o.Composition = String(o.Composition).replace(/[a-z]+/g, w => CODE[w] || w);
+    if (!isMissing(o.Price) && R() < 0.3) o.Price = String(o.Price).replace('.', ',') + ' €';
+    if (!isMissing(o['Lead time (weeks)']) && R() < 0.2) o['Lead time (weeks)'] = o['Lead time (weeks)'] + ' wks';
+    if (!isMissing(r.Price) && R() < 0.03) o.Price = '';
+    if (!isMissing(r['Lead time (wks)']) && R() < 0.02) o['Lead time (weeks)'] = 'TBC';
+    pan.push(o);
+  });
+  const t1 = pick(rows); pan.splice(between(10, pan.length-10), 0, {'Material code':typo(t1.Code), 'Description':t1.Description, 'Supplier':t1.Supplier, 'Price':t1.Price, 'MOQ':t1.MOQ, 'Lead time (weeks)':t1['Lead time (wks)'], 'Composition':t1.Composition, 'Origin':t1['Country of origin']});
+  ['FAB-27S-1994','LEA-27S-1996'].forEach(c => pan.push({'Material code':c, 'Description':c.startsWith('LEA') ? 'Nappa lambskin' : 'Cotton poplin', 'Supplier':pick(sups), 'Price':money(9 + R()*60), 'MOQ':100, 'Lead time (weeks)':8, 'Composition':c.startsWith('LEA') ? '100% lamb leather' : '100% cotton', 'Origin':'Italy'}));
+  const PF = ['Material code','Description','Supplier','Price','MOQ','Lead time (weeks)','Composition','Origin'];
+  const panSrc = buildSource('Panorama_SS27_export_SAMPLE.xlsx', PF, 'Material code', pan.map((o,i) => ({o, at:`row ${i+4}`})), {sheet:'Export', kind:'sheet', sample:true});
+
+  const ss = rows.filter(r => r.Collection === 'SS27' && !isMissing(r.Description));
+  const chosen = ss.filter(() => R() < 0.5).slice(0, 36);
+  const deck = chosen.map((r,i) => {
+    const unit = isMissing(r['Price unit']) ? '' : String(r['Price unit']).replace('€','').trim();
+    const price = isMissing(r.Price) ? 'TBC' : `€ ${money(r.Price)}${unit ? ' ' + unit : ''}`;
+    return {o:{'Code':r.Code, 'Material':r.Description, 'Composition':r.Composition || '', 'Price':price}, at:`slide ${3 + Math.floor(i/6)}`, r};
+  });
+  const bad = (i, f) => { if (deck[i]) f(deck[i]); };
+  bad(4, d => { if (!isMissing(d.r.Price)) d.o.Price = `€ ${money(d.r.Price*1.1)} ${String(d.r['Price unit']||'').replace('€','').trim()}`; });
+  bad(13, d => { if (!isMissing(d.r.Price)) d.o.Price = `€ ${money(d.r.Price*0.9)} ${String(d.r['Price unit']||'').replace('€','').trim()}`; });
+  bad(19, d => { d.o.Composition = otherComp(d.r); });
+  bad(8, d => { d.o.Code = typo(d.r.Code); });
+  bad(23, d => { if (!isMissing(d.r.Price)) d.o.Price = 'TBC'; });
+  if (deck[2] && !isMissing(deck[2].r.Price)) deck.push({o:{...deck[2].o, Price:`€ ${money(deck[2].r.Price*1.05)} ${String(deck[2].r['Price unit']||'').replace('€','').trim()}`}, at:`slide ${4 + Math.ceil(chosen.length/6)}`});
+  const pptSrc = buildSource('SS27_Materials_review_SAMPLE.pptx', ['Code','Material','Composition','Price'], 'Code', deck, {kind:'pptx', slides:5 + Math.ceil(chosen.length/6), sample:true});
+  return {pan:panSrc, ppt:pptSrc};
+}
+
+/* ---- Render ---- */
+function setView(v, focus){
+  view = v;
+  [['missing','tabMissing','viewMissing'],['check','tabCheck','viewCheck']].forEach(([k,t,p]) => {
+    $(t).setAttribute('aria-selected', v === k); $(t).tabIndex = v === k ? 0 : -1; $(p).hidden = v !== k;
+  });
+  if (focus) $(v === 'check' ? 'tabCheck' : 'tabMissing').focus();
+  $('colsDetails').hidden = v !== 'missing';
+  $('lede').textContent = v === 'check'
+    ? 'Where PLM, Panorama and the merch deck disagree, and which PLM gaps another source can fill.'
+    : 'Which fields are empty in the PLM material export, and which suppliers to chase.';
+  try { history.replaceState(null, '', v === 'check' ? '#cross-check' : location.pathname + location.search); } catch(e){}
+  render();
+}
+
+function renderSources(){
+  const P = plmSrc();
+  const card = k => {
+    const s = k === 'plm' ? P : X[k];
+    const inp = {plm:'file', pan:'filePan', ppt:'filePpt'}[k];
+    const role = {plm:'Reference', pan:'Compared with PLM', ppt:'Compared with PLM'}[k];
+    if (!s) return `<div class="src off">
+        <div class="src-top"><h3>${SRCN[k]}</h3><span class="role">Not loaded</span></div>
+        <p class="hint">${k === 'pan' ? 'Excel or CSV export from Panorama. The sheet and code column are found automatically.' : 'The merch deck (.pptx). Codes and values are read from tables and from text boxes such as "Price: 45 €".'}</p>
+        <div class="acts"><label class="btn small primary" for="${inp}">${k === 'pan' ? 'Load Panorama export' : 'Load PowerPoint'}</label></div></div>`;
+    const sample = k === 'plm' ? !D.source : !!s.sample;
+    const match = k === 'plm' ? null : [...s.recs.keys()].filter(c => P.recs.has(c)).length;
+    const nComp = k === 'plm' ? null : Object.keys(X.map[k]).length;
+    const meta = k === 'plm' ? `<b>${P.recs.size}</b> materials`
+      : `<b>${s.recs.size}</b> codes${s.kind === 'pptx' && s.slides ? ` on ${s.slides} slides` : ''} · <b>${match}</b> in PLM · ${nComp} field${nComp === 1 ? '' : 's'} compared`;
+    return `<div class="src">
+      <div class="src-top"><h3>${SRCN[k]}</h3><span class="pill${sample ? '' : ' real'}">${sample ? 'Sample' : 'Loaded'}</span></div>
+      <div class="file" title="${esc(s.file)}">${esc(s.file)}${s.sheet ? ` · ${esc(s.sheet)}` : ''}</div>
+      <div class="meta">${meta}</div>
+      ${s.hidden ? `<p class="hint">${s.hidden} hidden slide${s.hidden === 1 ? '' : 's'} skipped</p>` : ''}
+      <div class="acts"><label class="btn small" for="${inp}">${k === 'plm' ? 'Load PLM export' : 'Replace'}</label>${k !== 'plm' ? `<button class="btn small" type="button" data-rm="${k}">Remove</button>` : ''}</div></div>`;
+  };
+  $('sources').innerHTML = ['plm','pan','ppt'].map(card).join('');
+}
+
+function renderMap(){
+  const others = OTHERS.filter(k => X[k]);
+  const plmF = D.fields.filter(f => f !== D.id);
+  const n = plmF.filter(f => others.some(k => X.map[k][f])).length;
+  $('xMapSum').textContent = `${n} of ${plmF.length} PLM fields`;
+  let h = `<thead><tr><th>PLM field</th>${others.map(k => `<th>${SRCN[k]}</th>`).join('')}</tr></thead><tbody>`;
+  plmF.forEach(f => {
+    h += `<tr><td>${esc(f)}</td>${others.map(k => {
+      const cur = X.map[k][f] || '';
+      return `<td><select data-k="${k}" data-f="${esc(f)}" aria-label="${esc(SRCN[k])} column for ${esc(f)}"${cur ? '' : ' class="unset"'}><option value="">Not compared</option>${X[k].fields.map(c => `<option value="${esc(c)}"${c === cur ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></td>`;
+    }).join('')}</tr>`;
+  });
+  $('xMap').innerHTML = h + '</tbody>';
+  const unused = others.map(k => { const u = X[k].fields.filter(c => !Object.values(X.map[k]).includes(c)); return u.length ? `${SRCN[k]}: ${u.join(', ')}` : ''; }).filter(Boolean);
+  $('xUnused').textContent = unused.length ? `Columns not compared: ${unused.join(' · ')}` : '';
+}
+
+function sortIssues(list){
+  const fo = D.fields;
+  return list.slice().sort((a,b) => TORDER.indexOf(a.type) - TORDER.indexOf(b.type) || fo.indexOf(a.field) - fo.indexOf(b.field) || a.code.localeCompare(b.code, undefined, {numeric:true}));
+}
+function filteredIssues(){
+  const q = X.search.trim().toLowerCase();
+  return sortIssues(X.res.issues.filter(i => (X.issue === 'all' || i.type === X.issue) && (!X.field || i.field === X.field) &&
+    (!q || [i.code, i.desc].some(v => String(v).toLowerCase().includes(q)))));
+}
+const uniqAt = arr => { const u = [...new Set(arr.filter(Boolean))]; return u.length > 3 ? u.slice(0,3).join(', ') + '…' : u.join(', '); };
+
+function cellHTML(it, k){
+  if (it.type === 'nf'){
+    const r = k === 'plm' ? plmSrc().recs.get(it.c) : X[k].recs.get(it.c);
+    return r ? `<div class="vals"><span class="xv">Found${uniqAt(r.at) ? `<span class="at">${esc(uniqAt(r.at))}</span>` : ''}</span></div>`
+             : `<div class="vals"><span class="xv ${k === 'ppt' ? 'blank' : 'off'}">Not found</span></div>`;
+  }
+  const e = it.e[k];
+  if (e === 'nomap') return `<span class="na" title="Field not compared for this source"></span>`;
+  if (e === 'absent') return `<span class="na" title="Code not in this source">–</span>`;
+  if (!e.length) return `<span class="na">–</span>`;
+  return `<div class="vals">${e.map(x => {
+    const miss = isBlank(x.v);
+    const cls = miss ? 'blank' : (it.type === 'diff' && !same(x.v, it.ref)) ? 'off' : (it.type === 'fill' && k !== 'plm') ? 'fill' : '';
+    return `<span class="xv ${cls}">${miss ? 'empty' : esc(x.v)}${x.at ? `<span class="at">${esc(x.at)}</span>` : ''}</span>`;
+  }).join('')}</div>`;
+}
+
+function renderCheck(){
+  const res = X.res = computeCheck();
+  const total = res ? res.issues.length : 0;
+  $('tabCheckN').hidden = !res; $('tabCheckN').textContent = total;
+  if (view !== 'check') return;
+  renderSources();
+  $('checkBody').hidden = !res;
+  if (!res) return;
+  renderMap();
+  if (X.field && !res.F.includes(X.field)) X.field = null;
+
+  const cols4 = [cssv('--good'), cssv('--mild'), cssv('--crit'), cssv('--warn')];
+  drawDonut($('xDonut'), $('xLegend'), res.buckets, cols4, ['Same in every source','Gaps only','Different values','Code missing from a source'], 'match');
+  $('xScope').textContent = `${scopeText()} · ${res.codes} code${res.codes === 1 ? '' : 's'} checked`;
+  const ranked = res.F.map(f => ({f, ...res.byField[f], t: res.byField[f].diff + res.byField[f].fill + res.byField[f].empty})).filter(x => x.t).sort((a,b) => b.diff - a.diff || b.t - a.t);
+  const worst = ranked[0];
+  $('xStats').innerHTML = `
+    <div class="stat"><div class="k">Different values</div><div class="v num">${res.count.diff} <small>on ${res.diffCodes} material${res.diffCodes === 1 ? '' : 's'}</small></div></div>
+    <div class="stat"><div class="k">PLM gaps to fill</div><div class="v num">${res.count.fill} <small>found elsewhere</small></div></div>
+    <div class="stat"><div class="k">Codes not found</div><div class="v num">${res.count.nf}</div></div>
+    <div class="stat"><div class="k">Empty elsewhere</div><div class="v num">${res.count.empty}</div></div>
+    <div class="stat wide"><div class="k">Biggest mismatch</div><div class="v">${worst && worst.diff ? esc(worst.f) + ` <small class="num">${worst.diff} different</small>` : '<small>None</small>'}</div></div>`;
+
+  const cc = {diff:cssv('--crit'), empty:cssv('--warn'), fill:cssv('--good')};
+  const max = Math.max(1, ...ranked.map(x => x.t));
+  $('xBars').innerHTML = ranked.length ? ranked.map(x => `
+    <div class="bar-row${X.field === x.f ? ' on' : ''}" role="button" tabindex="0" data-f="${esc(x.f)}" aria-pressed="${X.field === x.f}">
+      <div class="name" title="${esc(x.f)}">${esc(x.f)}</div>
+      <div class="track stack">${['diff','empty','fill'].filter(t => x[t]).map(t => `<div class="fill" style="width:${x[t]/max*100}%;background:${cc[t]}"></div>`).join('')}</div>
+      <div class="val"><b>${x.t}</b><span>${[x.diff && `${x.diff} different`, x.fill && `${x.fill} to fill`, x.empty && `${x.empty} empty`].filter(Boolean).join(' · ')}</span></div>
+    </div>`).join('') : `<div class="empty">Every compared field matches across the sources.</div>`;
+  $('xKey').innerHTML = ranked.length ? [['diff','Different values'],['empty','Empty in another source'],['fill','PLM empty, filled elsewhere']].map(([t,l]) => `<span><span class="sw" style="background:${cc[t]}"></span>${l}</span>`).join('') : '';
+
+  $('xIssueSeg').innerHTML = [['all','All', total], ...TORDER.map(t => [t, TSHORT[t], res.count[t]])]
+    .map(([t,l,n]) => `<button type="button" data-t="${t}" aria-pressed="${X.issue === t}">${l}<span class="c">${n}</span></button>`).join('');
+
+  const items = filteredIssues();
+  const cols = ['plm', ...res.others];
+  $('xTitle').textContent = X.field ? `${X.field}: to resolve` : 'To resolve';
+  $('xSub').textContent = `${items.length} line${items.length === 1 ? '' : 's'} · ${scopeText()}${X.ppt ? '. The deck only covers what it presents, so codes missing from it are not flagged.' : ''}`;
+  $('xFieldFilter').innerHTML = X.field ? `<span class="active-filter">${esc(X.field)}<button type="button" id="xClearField" aria-label="Clear field filter">×</button></span>` : '';
+  if (!items.length){ $('xList').innerHTML = `<tr><td class="empty">${total ? 'Nothing matches these filters.' : 'No discrepancies: every compared value matches.'}</td></tr>`; $('xMore').textContent = ''; return; }
+  const CAP = X.showAll ? 2000 : 60;
+  let h = `<thead><tr><th>Code</th><th>Description</th><th>Field</th>${cols.map(k => `<th>${SRCN[k]}</th>`).join('')}<th>Issue</th></tr></thead><tbody>`;
+  items.slice(0, CAP).forEach(it => {
+    h += `<tr><td class="code">${esc(it.code)}</td><td class="desc">${esc(it.desc) || '—'}</td><td class="fld">${it.field ? esc(it.field) : '<span class="na">Code</span>'}</td>
+      ${cols.map(k => `<td>${cellHTML(it, k)}</td>`).join('')}
+      <td><span class="itag ${it.type}">${TSHORT[it.type]}</span><span class="inote">${esc(it.note)}</span></td></tr>`;
+  });
+  $('xList').innerHTML = h + '</tbody>';
+  $('xMore').innerHTML = items.length > CAP ? `Showing ${CAP} of ${items.length}. Copy and download include all of them. <button type="button" class="btn small" id="xShowAll">Show all</button>` : '';
+}
+
+/* ---- Copy / Excel report ---- */
+function cellText(it, k){
+  if (it.type === 'nf'){ const r = k === 'plm' ? plmSrc().recs.get(it.c) : X[k].recs.get(it.c); return r ? ['Found', uniqAt(r.at)] : ['Not found', '']; }
+  const e = it.e[k];
+  if (!Array.isArray(e)) return [e === 'absent' ? '–' : '', ''];
+  return [e.map(x => isBlank(x.v) ? '(empty)' : String(x.v).trim()).join(' | '), uniqAt(e.map(x => x.at))];
+}
+function issueRows(list){
+  const cols = ['plm', ...X.res.others];
+  const head = ['Code','Description','Field','Issue','Detail', ...cols.flatMap(k => [SRCN[k], `${SRCN[k]}: where`])];
+  return [head, ...list.map(it => [it.code, it.desc, it.field || 'Code', TYPES[it.type], it.note, ...cols.flatMap(k => cellText(it, k))])];
+}
+$('xCopy').onclick = () => {
+  if (!X.res) return;
+  const list = filteredIssues(); if (!list.length) return toast('Nothing to copy');
+  const clean = v => String(v ?? '').replace(/[\t\n\r]+/g,' ');
+  copy(issueRows(list).map(r => r.map(clean).join('\t')).join('\n'), `Copied ${list.length} lines. Paste into Excel.`);
+};
+$('xDownload').onclick = () => {
+  const res = X.res; if (!res) return;
+  if (typeof XLSX === 'undefined' || !XLSX.writeFile) return toast('The spreadsheet tool did not load. Reload the page.');
+  const P = plmSrc(), cols = ['plm', ...res.others];
+  const sum = [['PLM cross-check', new Date().toLocaleDateString('en-GB')], ['Scope', scopeText()], [],
+    ['Source', 'File', 'Codes', 'Also in PLM']];
+  cols.forEach(k => { const s = k === 'plm' ? P : X[k]; sum.push([SRCN[k], s.file + (s.sheet ? ` (${s.sheet})` : ''), s.recs.size, k === 'plm' ? s.recs.size : [...s.recs.keys()].filter(c => P.recs.has(c)).length]); });
+  sum.push([], ['Result', 'Lines']);
+  TORDER.forEach(t => sum.push([TYPES[t], res.count[t]]));
+  sum.push([], ['Field', 'Different values', 'PLM empty, filled elsewhere', 'Empty in another source', ...res.others.map(k => `${SRCN[k]} column`)]);
+  res.F.forEach(f => sum.push([f, res.byField[f].diff, res.byField[f].fill, res.byField[f].empty, ...res.others.map(k => X.map[k][f] || '')]));
+  const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.aoa_to_sheet(sum); ws1['!cols'] = [{wch:30},{wch:42},{wch:22},{wch:22},{wch:20},{wch:20}];
+  const rows = issueRows(sortIssues(res.issues));
+  const ws2 = XLSX.utils.aoa_to_sheet(rows);
+  ws2['!cols'] = [{wch:16},{wch:28},{wch:18},{wch:26},{wch:40}, ...cols.flatMap(() => [{wch:24},{wch:14}])];
+  ws2['!autofilter'] = {ref: XLSX.utils.encode_range({s:{r:0,c:0}, e:{r:rows.length-1, c:rows[0].length-1}})};
+  XLSX.utils.book_append_sheet(wb, ws1, 'Summary');
+  XLSX.utils.book_append_sheet(wb, ws2, 'To resolve');
+  XLSX.writeFile(wb, `PLM_cross-check_${new Date().toISOString().slice(0,10)}.xlsx`);
+  toast('Excel report downloaded');
+};
+
+/* ---- Events ---- */
+$('tabMissing').onclick = () => setView('missing');
+$('tabCheck').onclick = () => setView('check');
+document.querySelector('.tabs').onkeydown = e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft'){ e.preventDefault(); setView(view === 'missing' ? 'check' : 'missing', true); } };
+$('sources').onclick = e => { const b = e.target.closest('[data-rm]'); if (!b) return; X[b.dataset.rm] = null; X.map[b.dataset.rm] = {}; render(); };
+$('xMap').onchange = e => { const s = e.target.closest('select'); if (!s) return; const m = X.map[s.dataset.k];
+  if (s.value){ Object.keys(m).forEach(f => { if (m[f] === s.value) delete m[f]; }); m[s.dataset.f] = s.value; } else delete m[s.dataset.f]; render(); };
+$('xIssueSeg').onclick = e => { const b = e.target.closest('[data-t]'); if (!b) return; X.issue = b.dataset.t; X.showAll = false; render(); };
+function xPick(f){ X.field = X.field === f ? null : f; if (X.issue === 'nf') X.issue = 'all'; render(); }
+$('xBars').onclick = e => { const r = e.target.closest('[data-f]'); if (r) xPick(r.dataset.f); };
+$('xBars').onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.dataset.f){ e.preventDefault(); xPick(e.target.dataset.f); } };
+$('xSearch').oninput = e => { X.search = e.target.value; render(); };
+$('xMore').onclick = e => { if (e.target.id === 'xShowAll'){ X.showAll = true; render(); } };
+$('xFieldFilter').onclick = e => { if (e.target.id === 'xClearField'){ X.field = null; render(); } };
+
+async function readSource(file, k){
+  if (!file) return;
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  try {
+    if (ext === 'ppt') throw new Error('Save the deck as .pptx and try again.');
+    if (ext === 'pptx') k = 'ppt';
+    else if (k === 'ppt') throw new Error('The PowerPoint slot takes a .pptx file.');
+    let src;
+    if (k === 'ppt') src = await pptxToSource(await file.arrayBuffer(), file.name);
+    else {
+      if (typeof XLSX === 'undefined') throw new Error('The spreadsheet reader did not load. Check your connection and reload.');
+      src = sheetToSource(XLSX.read(new Uint8Array(await file.arrayBuffer()), {type:'array'}), file.name);
+    }
+    OTHERS.forEach(o => { if (X[o] && X[o].sample) { X[o] = null; X.map[o] = {}; } });
+    X[k] = src; X.map[k] = autoMap(src); X.field = null; X.issue = 'all'; X.showAll = false;
+    if (view !== 'check') setView('check'); else render();
+    const inPlm = [...src.recs.keys()].filter(c => plmSrc().recs.has(c)).length;
+    toast(`${SRCN[k]}: ${src.recs.size} codes read, ${inPlm} found in PLM`);
+  } catch(err){ toast(err && err.message ? err.message : 'Could not read that file.'); }
+}
+$('filePan').onchange = e => { readSource(e.target.files[0], 'pan'); e.target.value = ''; };
+$('filePpt').onchange = e => { readSource(e.target.files[0], 'ppt'); e.target.value = ''; };
+
 /* ---------- File loading ---------- */
 const findCol = (cols, re) => cols.find(c => re.test(c));
 function readFile(file){
@@ -546,11 +1327,23 @@ let dragDepth = 0;
 window.addEventListener('dragenter', e => { if ([...(e.dataTransfer?.types||[])].includes('Files')){ dragDepth++; $('drop').hidden=false; } });
 window.addEventListener('dragleave', () => { if (--dragDepth<=0){ dragDepth=0; $('drop').hidden=true; } });
 window.addEventListener('dragover', e => e.preventDefault());
-window.addEventListener('drop', e => { e.preventDefault(); dragDepth=0; $('drop').hidden=true; readFile(e.dataTransfer?.files?.[0]); });
+window.addEventListener('drop', e => {
+  e.preventDefault(); dragDepth=0; $('drop').hidden=true;
+  const files = [...(e.dataTransfer?.files || [])];
+  if (view !== 'check'){
+    const deck = files.find(f => /\.pptx?$/i.test(f.name));
+    if (deck) return readSource(deck, 'ppt');
+    return readFile(files[0]);
+  }
+  // On the cross-check: a deck goes to PowerPoint, a spreadsheet to Panorama
+  files.slice(0, 2).forEach(f => readSource(f, /\.pptx?$/i.test(f.name) ? 'ppt' : 'pan'));
+});
+window.addEventListener('dragenter', () => { $('drop').textContent = view === 'check' ? 'Drop a Panorama export or the merch deck to cross-check' : 'Drop the PLM export to check it'; });
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => render());
 new MutationObserver(() => render()).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
 
 load(makeSample());
+if (location.hash === '#cross-check') setView('check');
 })();
 </script>
 </body>
